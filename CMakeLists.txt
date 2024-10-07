@@ -79,4 +79,16 @@ target_link_libraries(cap_frame_rate PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer
 add_executable(motion motion/motion.cpp)
 target_link_libraries(motion PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
 
+add_executable(scrolling scrolling/scrolling.cpp)
+target_link_libraries(scrolling PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(infinite_background infinite_background/infinite_background.cpp)
+target_link_libraries(infinite_background PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(input_and_clipboard input_and_clipboard/input_and_clipboard.cpp)
+target_link_libraries(input_and_clipboard PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(audio_recorder audio_recorder/audio_recorder.cpp)
+target_link_libraries(audio_recorder PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
 add_executable(timer_test test/timer_test.cpp)
