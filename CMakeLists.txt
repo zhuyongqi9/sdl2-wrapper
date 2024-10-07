@@ -56,3 +56,6 @@ target_link_libraries(rotation_flipping PRIVATE SDL2 SDL2_image)
 
 add_executable(true_type_font true_type_font/true_type_font.cpp)
 target_link_libraries(true_type_font PRIVATE SDL2 SDL2_image SDL2_ttf)
+
+add_executable(mouse_event mouse_event/mouse_event.cpp)
+target_link_libraries(mouse_event PRIVATE SDL2 SDL2_image SDL2_ttf)
