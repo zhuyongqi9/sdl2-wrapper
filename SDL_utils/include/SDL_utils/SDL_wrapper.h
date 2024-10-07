@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include <SDL2/SDL_mixer.h>
 #include <string>
 #include <cstdint>
 #include <stdexcept>
@@ -51,6 +52,15 @@ public:
     ~TTF_Initializer();
 private:
     int flags;
+};
+
+class Mix_Initializer {
+public:
+    Mix_Initializer(const Mix_Initializer&) = delete;
+    Mix_Initializer& operator=(const Mix_Initializer&) = delete;
+    
+    Mix_Initializer();
+    ~Mix_Initializer();
 };
 
 class WWindow {
@@ -100,6 +110,20 @@ private:
     SDL_Renderer *renderer;
 };
 
+class WBMPSurface{
+public:
+    WBMPSurface() = delete;
+    WBMPSurface(const WBMPSurface &) = delete;
+    WBMPSurface& operator=(const WBMPSurface&) = delete;
+    
+    WBMPSurface(std::string);
+    ~WBMPSurface();
+   
+    SDL_Surface* get() { return surface; } 
+private:
+    SDL_Surface* surface; 
+};
+
 class WPNGSurface {
 public:
     WPNGSurface() = delete;
@@ -142,5 +166,33 @@ public:
     void free();
 private:
     SDL_Surface* surface;
+};
+
+class WMUS {
+public:
+    WMUS() = delete;
+    WMUS(const WMUS&) = delete;
+    WMUS& operator=(const WMUS&) = delete;
+    
+    WMUS(std::string path);
+    ~WMUS();
+    
+    Mix_Music* get() { return music; }
+private:
+    Mix_Music* music;
+};
+
+class WWAV {
+public:
+    WWAV() = delete;
+    WWAV(const WWAV&) = delete;
+    WWAV& operator=(const WWAV&) = delete;
+    
+    WWAV(std::string path);
+    ~WWAV();
+    
+    Mix_Chunk* get() { return chunk; }
+private:
+    Mix_Chunk* chunk;
 };
 

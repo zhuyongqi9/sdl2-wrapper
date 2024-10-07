@@ -1,4 +1,5 @@
 #include "SDL_utils/SDL_wrapper.h"
+#include <SDL2/SDL_mixer.h>
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -32,6 +33,16 @@ TTF_Initializer::~TTF_Initializer() {
     TTF_Quit();
 }
 
+Mix_Initializer::Mix_Initializer() {
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        throw std::runtime_error("failed to initialize Mixer, error: " + std::string(Mix_GetError()));
+    }
+}
+
+Mix_Initializer::~Mix_Initializer() {
+    Mix_Quit();
+}
+
 
 WWindow::WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
     SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
@@ -52,6 +63,20 @@ WWindow::WWindow(std::string title, int x, int y,int SCREEN_WIDTH, int SCREEN_HE
 WWindow::~WWindow() {
     if (window != nullptr) {
         SDL_DestroyWindow(window);
+    }
+}
+
+WBMPSurface::WBMPSurface(const std::string path) {
+    SDL_Surface *surface = SDL_LoadBMP(path.c_str());
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to load bmp: " + path + " error: " + std::string(SDL_GetError()));
+    }
+    this->surface = surface;
+}
+
+WBMPSurface::~WBMPSurface() {
+    if (surface != nullptr) {
+        SDL_FreeSurface(surface);
     }
 }
 
@@ -76,9 +101,11 @@ WPNGSurface::~WPNGSurface () {
 WTexture::WTexture(SDL_Renderer *renderer, SDL_Surface *surface) {
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
     if (texture == nullptr) {
-        throw std::runtime_error("failed to create texture from surface");
+        throw std::runtime_error("failed to create texture from surface. error: " + std::string(SDL_GetError()));
     }
     this->texture = texture;
+    this->width = surface->w;
+    this->height = surface->h;
 }
 
 
@@ -133,4 +160,29 @@ WTTFSurface::~WTTFSurface() {
         SDL_FreeSurface(surface);
     }
 }
+
+WMUS::WMUS(std::string path) {
+    Mix_Music *music = Mix_LoadMUS(path.c_str());
+    if (music == NULL) {
+        throw std::runtime_error("failed to load music: " + path + ". error: " + std::string(Mix_GetError()));
+    }
+    this->music = music;
+}
+
+WMUS::~WMUS() {
+    Mix_FreeMusic(music);
+}
+
+WWAV::WWAV(std::string path) {
+    Mix_Chunk *chunk = Mix_LoadWAV(path.c_str());
+    if (chunk == NULL) {
+        throw std::runtime_error("failed to load wav: " + path + ". error: " + std::string(Mix_GetError()));
+    }
+    this->chunk = chunk;
+}
+
+WWAV::~WWAV() {
+    Mix_FreeChunk(chunk);
+}
+
 
