@@ -1,8 +1,16 @@
 cmake_minimum_required(VERSION 3.2)
 project(SDL2_snippets)
 
+if(APPLE)
+    include_directories(/opt/homebrew/include)
+    link_directories(/opt/homebrew/lib)
+endif()
+
+add_compile_definitions(WORK_DIR=${PROJECT_SOURCE_DIR})
+
 add_subdirectory(SDL_utils)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${PROJECT_SOURCE_DIR}/SDL_utils/include)
 link_libraries(SDL_utils)
@@ -45,3 +53,4 @@ target_link_libraries(animation PRIVATE SDL2 SDL2_image)
 
 add_executable(rotation_flipping rotation_flipping/rotation_flipping.cpp)
 target_link_libraries(rotation_flipping PRIVATE SDL2 SDL2_image)
+
