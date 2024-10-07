@@ -1,0 +1,56 @@
+[
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/basic_window.dir/basic_window.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/basic_window.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/basic_window.cpp",
+  "output": "CMakeFiles/basic_window.dir/basic_window.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/key_handler.dir/key_handler/key_handler.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/key_handler/key_handler.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/key_handler/key_handler.cpp",
+  "output": "CMakeFiles/key_handler.dir/key_handler/key_handler.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/stretch.dir/stretch/stretch.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/stretch/stretch.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/stretch/stretch.cpp",
+  "output": "CMakeFiles/stretch.dir/stretch/stretch.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/png.dir/png/png.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/png/png.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/png/png.cpp",
+  "output": "CMakeFiles/png.dir/png/png.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/texture_render.dir/texture_render/texture_render.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/texture_render/texture_render.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/texture_render/texture_render.cpp",
+  "output": "CMakeFiles/texture_render.dir/texture_render/texture_render.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/geomoetry_render.dir/geomoetry_render/geomoetry_render.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/geomoetry_render/geomoetry_render.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/geomoetry_render/geomoetry_render.cpp",
+  "output": "CMakeFiles/geomoetry_render.dir/geomoetry_render/geomoetry_render.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/view_point.dir/view_point/view_point.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/view_point/view_point.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/view_point/view_point.cpp",
+  "output": "CMakeFiles/view_point.dir/view_point/view_point.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/color_keying.dir/color_keying/color_keying.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/color_keying/color_keying.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/color_keying/color_keying.cpp",
+  "output": "CMakeFiles/color_keying.dir/color_keying/color_keying.cpp.o"
+},
+{
+  "directory": "/home/kirin-zhu/Projects/sdl2-snippets/out/build/clang",
+  "command": "/usr/bin/clang++  -I/home/kirin-zhu/Projects/sdl2-snippets/SDL_utils/include -g -o CMakeFiles/clip_rendering.dir/clip_rendering/clip_rendering.cpp.o -c /home/kirin-zhu/Projects/sdl2-snippets/clip_rendering/clip_rendering.cpp",
+  "file": "/home/kirin-zhu/Projects/sdl2-snippets/clip_rendering/clip_rendering.cpp",
+  "output": "CMakeFiles/clip_rendering.dir/clip_rendering/clip_rendering.cpp.o"
+}
+]
