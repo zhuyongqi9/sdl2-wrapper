@@ -2,6 +2,7 @@
 #include <SDL2/SDL_events.h>
 #include <iostream>
 
+const std::string PROJECT_DIR(MACRO_PROJECT_DIR);
 const int SCALE = 2;
 const int SCREEN_WIDTH = 800 * SCALE;
 const int SCREEN_HEIGHT = 600 * SCALE;
@@ -11,7 +12,7 @@ int main() {
         SDL_Initializer initializer(W_SDL_INIT_VIDEO | W_IMG_INIT_PNG | W_TTF_INIT);
         WWindow window("Animation", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        WTTFFont font("/home/kirin-zhu/Projects/sdl2-snippets/true_type_font/lazy.ttf", 64);
+        WTTFFont font(PROJECT_DIR + "/true_type_font/lazy.ttf", 64);
         WTTFSurface ttf_surface(font.get(), "hello SDL", {0, 0, 0});
         WTexture texture(renderer.get(), ttf_surface.get());
 

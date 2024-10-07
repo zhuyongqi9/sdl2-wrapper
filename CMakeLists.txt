@@ -6,7 +6,7 @@ if(APPLE)
     link_directories(/opt/homebrew/lib)
 endif()
 
-add_compile_definitions(WORK_DIR=${PROJECT_SOURCE_DIR})
+add_compile_definitions(MACRO_PROJECT_DIR="${PROJECT_SOURCE_DIR}")
 
 add_subdirectory(SDL_utils)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -54,3 +54,5 @@ target_link_libraries(animation PRIVATE SDL2 SDL2_image)
 add_executable(rotation_flipping rotation_flipping/rotation_flipping.cpp)
 target_link_libraries(rotation_flipping PRIVATE SDL2 SDL2_image)
 
+add_executable(true_type_font true_type_font/true_type_font.cpp)
+target_link_libraries(true_type_font PRIVATE SDL2 SDL2_image SDL2_ttf)
