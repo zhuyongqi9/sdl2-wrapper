@@ -59,3 +59,6 @@ target_link_libraries(true_type_font PRIVATE SDL2 SDL2_image SDL2_ttf)
 
 add_executable(mouse_event mouse_event/mouse_event.cpp)
 target_link_libraries(mouse_event PRIVATE SDL2 SDL2_image SDL2_ttf)
+
+add_executable(key_state key_state/key_state.cpp)
+target_link_libraries(key_state PRIVATE SDL2 SDL2_image SDL2_ttf)
