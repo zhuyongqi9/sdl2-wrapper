@@ -13,6 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 
 include_directories(${PROJECT_SOURCE_DIR}/SDL_utils/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)    
 link_libraries(SDL_utils)
 
 add_executable(basic_window basic_window.cpp)
@@ -62,3 +63,20 @@ target_link_libraries(mouse_event PRIVATE SDL2 SDL2_image SDL2_ttf)
 
 add_executable(key_state key_state/key_state.cpp)
 target_link_libraries(key_state PRIVATE SDL2 SDL2_image SDL2_ttf)
+
+add_executable(sound_effects_and_music sound_effects_and_music/sound_effects_and_music.cpp)
+target_link_libraries(sound_effects_and_music PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(timing timing/timing.cpp)
+target_link_libraries(timing PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(frame_rate frame_rate/frame_rate.cpp)
+target_link_libraries(frame_rate PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(cap_frame_rate cap_frame_rate/cap_frame_rate.cpp)
+target_link_libraries(cap_frame_rate PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(motion motion/motion.cpp)
+target_link_libraries(motion PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(timer_test test/timer_test.cpp)
