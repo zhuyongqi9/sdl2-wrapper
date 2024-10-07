@@ -1,0 +1,13 @@
+
+const int MAX_RECORDING_DEVICES = 10;
+const int MAX_RECORDING_SECONDS = 5;
+const int RECORDING_BUFFER_SECONDS = MAX_RECORDING_SECONDS + 1;
+
+enum RecordingState {
+    SELECTING_DEVICE,
+    STOPPED,
+    RECORDING,
+    RECORDED,
+    PLAYBACK,
+    ERROR
+};
