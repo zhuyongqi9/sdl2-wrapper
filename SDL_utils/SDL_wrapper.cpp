@@ -1,6 +1,4 @@
 #include "SDL_utils/SDL_wrapper.h"
-#include <SDL2/SDL_render.h>
-#include <stdexcept>
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (flags & W_SDL_INIT_VIDEO) {
@@ -11,7 +9,11 @@ SDL_Initializer::SDL_Initializer(int flags) {
         int img_flags = IMG_INIT_PNG;
         //only care about img_flag
         if (!(IMG_Init(img_flags) & img_flags)) {
-            throw std::runtime_error("Failed to initialize SDL, error: " + std::string(SDL_GetError()));
+            throw std::runtime_error("Failed to initialize SDL_image, error: " + std::string(SDL_GetError()));
+        }
+    } else if (flags & W_TTF_INIT) {
+        if (TTF_Init() < 0) {
+            throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
         }
     }
     this->flags = flags;
@@ -47,7 +49,7 @@ WWindow::~WWindow() {
     }
 }
 
-WSurface::WSurface(std::string path) {
+WPNGSurface::WPNGSurface(std::string path) {
     SDL_Surface* loadSurface = IMG_Load(path.c_str());
     if (loadSurface == nullptr) {
         throw std::runtime_error("failed to load image " + path +  "error: " + std::string(IMG_GetError()));
@@ -55,19 +57,19 @@ WSurface::WSurface(std::string path) {
     surface = loadSurface;
 }
 
-void WSurface::free() {
+void WPNGSurface::free() {
     if (surface != nullptr) {
         SDL_FreeSurface(surface);
     }
 }
 
-WSurface::~WSurface () {
+WPNGSurface::~WPNGSurface () {
     free();
 }
 
 WTexture::WTexture(std::string path, SDL_Renderer *render) {
     try {
-        WSurface loadSurface = WSurface(path);
+        WPNGSurface loadSurface = WPNGSurface(path);
 
         SDL_Texture* newTexture = NULL;
         if ((newTexture = SDL_CreateTextureFromSurface(render, loadSurface.get())) == nullptr) {
@@ -83,7 +85,7 @@ WTexture::WTexture(std::string path, SDL_Renderer *render) {
 
 WTexture::WTexture(std::string path, SDL_Renderer *render, WRGB rgb) {
     try {
-        WSurface loadSurface = WSurface(path);
+        WPNGSurface loadSurface = WPNGSurface(path);
         SDL_SetColorKey(loadSurface.get(), SDL_TRUE, SDL_MapRGB(loadSurface.get()->format, rgb.r, rgb.g,  rgb.b));
 
         SDL_Texture* newTexture = NULL;

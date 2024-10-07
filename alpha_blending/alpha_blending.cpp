@@ -18,8 +18,8 @@ int main(int argc, char **argv) {
         SDL_Initializer initializer(W_SDL_INIT_VIDEO | W_IMG_INIT_PNG);
         WWindow window("Alpha Blending", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
-        WTexture front_texture("/home/kirin-zhu/Projects/sdl2-snippets/alpha_blending/fadeout.png", renderer.get());
-        WTexture back_texture("/home/kirin-zhu/Projects/sdl2-snippets/alpha_blending/fadein.png", renderer.get());
+        WPNGTexture front_texture("/home/kirin-zhu/Projects/sdl2-snippets/alpha_blending/fadeout.png", renderer.get());
+        WPNGTexture back_texture("/home/kirin-zhu/Projects/sdl2-snippets/alpha_blending/fadein.png", renderer.get());
 
         bool quit = false;
         SDL_Event e;

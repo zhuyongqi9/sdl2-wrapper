@@ -1,13 +1,17 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <string>
 #include <cstdint>
+#include <stdexcept>
 
 enum {
     W_SDL_INIT_VIDEO,
     W_IMG_INIT_PNG,
+    W_TTF_INIT,
 };
 
 class WRGB {
@@ -47,12 +51,24 @@ private:
     SDL_Window *window;
 };
 
-class WSurface {
+class WPNGSurface {
 public:
-    WSurface() = delete;
-    WSurface& operator=(const WSurface&) = delete;
-    explicit WSurface(std::string path);
-    ~WSurface();
+    WPNGSurface() = delete;
+    WPNGSurface& operator=(const WPNGSurface&) = delete;
+    explicit WPNGSurface(std::string path);
+    ~WPNGSurface();
+
+    SDL_Surface* get() { return surface; };
+    void free();
+private:
+    SDL_Surface* surface;
+};
+
+class WTTFSurface {
+public:
+    WTTFSurface() = delete;
+    WTTFSurface(const WTTFSurface&) = delete;
+    WTTFSurface& operator=(const WTTFSurface&) = delete;
 
     SDL_Surface* get() { return surface; };
     void free();
@@ -68,6 +84,7 @@ public:
 
     WTexture(std::string path, SDL_Renderer *render);
     WTexture(std::string path, SDL_Renderer *render, WRGB rgb);
+    WTexture(WTTFSurface surface);
     ~WTexture();
     void free();
     SDL_Texture* get() {return texture;}; 
@@ -77,6 +94,7 @@ public:
 private:
     SDL_Texture* texture;
 };
+
 
 class WRenderer{
 public:

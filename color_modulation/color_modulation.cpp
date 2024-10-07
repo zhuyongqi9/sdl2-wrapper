@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
         SDL_Initializer initialer(W_SDL_INIT_VIDEO | W_IMG_INIT_PNG);
         WWindow window("color modulation", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN); 
         WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
-        WTexture texture("/home/kirin-zhu/Projects/sdl2-snippets/color_modulation/colors.png", renderer.get());
+        WPNGTexture texture("/home/kirin-zhu/Projects/sdl2-snippets/color_modulation/colors.png", renderer.get());
 
         SDL_Event e;
         bool quit = false;

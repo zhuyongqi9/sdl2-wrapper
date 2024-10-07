@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
         bool quit = false;
         SDL_Event e;
 
-        WTexture sprites_texture("/home/kirin-zhu/Projects/sdl2-snippets/clip_rendering/dots.png", gRenderer, WRGB(0, 0xFF, 0xFF));
+        WPNGTexture sprites_texture("/home/kirin-zhu/Projects/sdl2-snippets/clip_rendering/dots.png", gRenderer, WRGB(0, 0xFF, 0xFF));
 
         while (!quit) {
             while (SDL_PollEvent(&e) != 0) {

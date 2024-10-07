@@ -27,8 +27,8 @@ int main(int argc, char **argv) {
         bool quit = false;
         SDL_Event e;
 
-        WTexture background_texture("/home/kirin-zhu/Projects/sdl2-snippets/color_keying/background.png", gRenderer);
-        WTexture foo_texture("/home/kirin-zhu/Projects/sdl2-snippets/color_keying/foo.png", gRenderer);
+        WPNGTexture background_texture("/home/kirin-zhu/Projects/sdl2-snippets/color_keying/background.png", gRenderer);
+        WPNGTexture foo_texture("/home/kirin-zhu/Projects/sdl2-snippets/color_keying/foo.png", gRenderer);
         SDL_Rect foo_rect = { (int)(240 * 2.5), 190 * 4 - 130, foo_texture.width, foo_texture.height };
 
         while (!quit) {
