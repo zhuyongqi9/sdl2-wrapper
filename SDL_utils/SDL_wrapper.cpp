@@ -1,18 +1,21 @@
 #include "SDL_utils/SDL_wrapper.h"
-
 SDL_Initializer::SDL_Initializer(int flags) {
     if (flags & W_SDL_INIT_VIDEO) {
         if (SDL_Init(SDL_INIT_VIDEO) < 0) {
             throw std::runtime_error("Failed to initialize SDL, error: " + std::string(SDL_GetError()));
         }
-    } else if (flags & W_IMG_INIT_PNG) {
+    } 
+    
+    if (flags & W_IMG_INIT_PNG) {
         int img_flags = IMG_INIT_PNG;
         //only care about img_flag
         if (!(IMG_Init(img_flags) & img_flags)) {
             throw std::runtime_error("Failed to initialize SDL_image, error: " + std::string(SDL_GetError()));
         }
-    } else if (flags & W_TTF_INIT) {
-        if (TTF_Init() < 0) {
+    } 
+    
+    if (flags & W_TTF_INIT) {
+        if (TTF_Init() == -1) {
             throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
         }
     }
@@ -22,8 +25,14 @@ SDL_Initializer::SDL_Initializer(int flags) {
 SDL_Initializer::~SDL_Initializer() {
     if (flags & W_SDL_INIT_VIDEO) {
         SDL_Quit();
-    } else if (flags & W_SDL_INIT_VIDEO) {
+    } 
+    
+    if (flags & W_SDL_INIT_VIDEO) {
         IMG_Quit();
+    }
+
+    if (flags & W_TTF_INIT) {
+        TTF_Quit();
     }
 }
 
@@ -67,39 +76,14 @@ WPNGSurface::~WPNGSurface () {
     free();
 }
 
-WTexture::WTexture(std::string path, SDL_Renderer *render) {
-    try {
-        WPNGSurface loadSurface = WPNGSurface(path);
-
-        SDL_Texture* newTexture = NULL;
-        if ((newTexture = SDL_CreateTextureFromSurface(render, loadSurface.get())) == nullptr) {
-            throw std::runtime_error("failed to create surface, error: " + std::string(SDL_GetError()));
-        }
-        texture = newTexture;
-        width = loadSurface.get()->w;
-        height = loadSurface.get()->h;
-    } catch (const std::exception &e) {
-        throw e;
+WTexture::WTexture(SDL_Renderer *renderer, SDL_Surface *surface) {
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+    if (texture == nullptr) {
+        throw std::runtime_error("failed to create texture from surface");
     }
+    this->texture = texture;
 }
 
-WTexture::WTexture(std::string path, SDL_Renderer *render, WRGB rgb) {
-    try {
-        WPNGSurface loadSurface = WPNGSurface(path);
-        SDL_SetColorKey(loadSurface.get(), SDL_TRUE, SDL_MapRGB(loadSurface.get()->format, rgb.r, rgb.g,  rgb.b));
-
-        SDL_Texture* newTexture = NULL;
-        if ((newTexture = SDL_CreateTextureFromSurface(render, loadSurface.get())) == nullptr) {
-            throw std::runtime_error("failed to create surface, error: " + std::string(SDL_GetError()));
-        }
-        texture = newTexture;
-        width = loadSurface.get()->w;
-        height = loadSurface.get()->h;
-    } catch (const std::exception &e) {
-        throw e;
-    }
-
-}
 
 WTexture::~WTexture() {
     free();
@@ -124,3 +108,32 @@ WRenderer::~WRenderer() {
         SDL_DestroyRenderer(renderer);
     }
 }
+
+WTTFFont::WTTFFont(std::string path, int size) {
+    TTF_Font *font = TTF_OpenFont(path.c_str(), size);
+    if (font == nullptr) {
+        throw std::runtime_error("failed to open ttf font " + std::string(TTF_GetError()));
+    }
+    this->font = font;
+}
+
+WTTFFont::~WTTFFont() {
+    if (font != nullptr) {
+        TTF_CloseFont(font);
+    }
+}
+
+WTTFSurface::WTTFSurface(TTF_Font* font, std::string text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurface::~WTTFSurface() {
+    if (surface != nullptr) {
+        SDL_FreeSurface(surface);
+    }
+}
+

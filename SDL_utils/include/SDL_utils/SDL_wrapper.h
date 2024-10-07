@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_render.h>
@@ -51,40 +52,13 @@ private:
     SDL_Window *window;
 };
 
-class WPNGSurface {
-public:
-    WPNGSurface() = delete;
-    WPNGSurface& operator=(const WPNGSurface&) = delete;
-    explicit WPNGSurface(std::string path);
-    ~WPNGSurface();
-
-    SDL_Surface* get() { return surface; };
-    void free();
-private:
-    SDL_Surface* surface;
-};
-
-class WTTFSurface {
-public:
-    WTTFSurface() = delete;
-    WTTFSurface(const WTTFSurface&) = delete;
-    WTTFSurface& operator=(const WTTFSurface&) = delete;
-
-    SDL_Surface* get() { return surface; };
-    void free();
-private:
-    SDL_Surface* surface;
-};
-
 class WTexture {
 public:
     WTexture() = delete;
     WTexture(const WTexture&) = delete;
     WTexture& operator=(const WTexture&) = delete;
 
-    WTexture(std::string path, SDL_Renderer *render);
-    WTexture(std::string path, SDL_Renderer *render, WRGB rgb);
-    WTexture(WTTFSurface surface);
+    WTexture(SDL_Renderer *renderer, SDL_Surface *surface);
     ~WTexture();
     void free();
     SDL_Texture* get() {return texture;}; 
@@ -95,8 +69,7 @@ private:
     SDL_Texture* texture;
 };
 
-
-class WRenderer{
+class WRenderer {
 public:
     WRenderer() = delete;
     WRenderer(const WRenderer&) = delete;
@@ -109,3 +82,48 @@ public:
 private:
     SDL_Renderer *renderer;
 };
+
+class WPNGSurface {
+public:
+    WPNGSurface() = delete;
+    WPNGSurface& operator=(const WPNGSurface&) = delete;
+
+    explicit WPNGSurface(std::string path);
+
+    ~WPNGSurface();
+
+    SDL_Surface* get() { return surface; };
+    void free();
+private:
+    SDL_Surface* surface;
+};
+
+class WTTFFont {
+public:
+    WTTFFont() = delete;
+    WTTFFont(const WTTFFont&) = delete;
+    WTTFFont& operator=(const WTTFFont&) = delete;
+
+    WTTFFont(std::string path, int size);
+    ~WTTFFont();
+
+    TTF_Font* get() { return font; } 
+private:
+    TTF_Font *font;
+};
+
+class WTTFSurface {
+public:
+    WTTFSurface() = delete;
+    WTTFSurface(const WTTFSurface&) = delete;
+    WTTFSurface& operator=(const WTTFSurface&) = delete;
+
+    WTTFSurface(TTF_Font* , std::string , SDL_Color );
+    ~WTTFSurface();
+
+    SDL_Surface* get() { return surface; };
+    void free();
+private:
+    SDL_Surface* surface;
+};
+
