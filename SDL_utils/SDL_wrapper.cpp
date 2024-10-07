@@ -1,40 +1,37 @@
 #include "SDL_utils/SDL_wrapper.h"
+
 SDL_Initializer::SDL_Initializer(int flags) {
-    if (flags & W_SDL_INIT_VIDEO) {
-        if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-            throw std::runtime_error("Failed to initialize SDL, error: " + std::string(SDL_GetError()));
-        }
-    } 
-    
-    if (flags & W_IMG_INIT_PNG) {
-        int img_flags = IMG_INIT_PNG;
-        //only care about img_flag
-        if (!(IMG_Init(img_flags) & img_flags)) {
-            throw std::runtime_error("Failed to initialize SDL_image, error: " + std::string(SDL_GetError()));
-        }
-    } 
-    
-    if (flags & W_TTF_INIT) {
-        if (TTF_Init() == -1) {
-            throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
-        }
+    if (SDL_Init(flags) < 0) {
+        throw std::runtime_error("Failed to initialize SDL, error: " + std::string(SDL_GetError()));
     }
-    this->flags = flags;
 } 
 
 SDL_Initializer::~SDL_Initializer() {
-    if (flags & W_SDL_INIT_VIDEO) {
-        SDL_Quit();
-    } 
-    
-    if (flags & W_SDL_INIT_VIDEO) {
-        IMG_Quit();
-    }
+    SDL_Quit();
+}
 
-    if (flags & W_TTF_INIT) {
-        TTF_Quit();
+IMG_Initializer::IMG_Initializer(int flags) {
+    int img_flags = IMG_INIT_PNG;
+    //only care about img_flag
+    if (!(IMG_Init(img_flags) & img_flags)) {
+        throw std::runtime_error("Failed to initialize SDL_image, error: " + std::string(SDL_GetError()));
     }
 }
+
+IMG_Initializer::~IMG_Initializer(){
+    IMG_Quit();
+}
+
+TTF_Initializer::TTF_Initializer() {
+    if (TTF_Init() == -1) {
+        throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
+    }
+}
+
+TTF_Initializer::~TTF_Initializer() {
+    TTF_Quit();
+}
+
 
 WWindow::WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
     SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);

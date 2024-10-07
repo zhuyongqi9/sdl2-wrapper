@@ -9,12 +9,6 @@
 #include <cstdint>
 #include <stdexcept>
 
-enum {
-    W_SDL_INIT_VIDEO,
-    W_IMG_INIT_PNG,
-    W_TTF_INIT,
-};
-
 class WRGB {
 public:
     WRGB() = delete;
@@ -32,6 +26,29 @@ public:
     
     SDL_Initializer(int flags);
     ~SDL_Initializer();
+private:
+    int flags;
+};
+
+class IMG_Initializer {
+public:
+    IMG_Initializer() = delete;
+    IMG_Initializer(const IMG_Initializer&) = delete;
+    IMG_Initializer& operator=(const IMG_Initializer&) = delete;
+    
+    IMG_Initializer(int flags);
+    ~IMG_Initializer();
+private:
+    int flags;
+};
+
+class TTF_Initializer {
+public:
+    TTF_Initializer(const TTF_Initializer&) = delete;
+    TTF_Initializer& operator=(const TTF_Initializer&) = delete;
+    
+    TTF_Initializer();
+    ~TTF_Initializer();
 private:
     int flags;
 };
