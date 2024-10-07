@@ -3,7 +3,10 @@
 #include <SDL2/SDL_rect.h>
 #include <iostream>
 #include <vector>
+#include <string>
+#include <algorithm>
 
+const std::string PROJECT_DIR(MACRO_PROJECT_DIR);
 
 const int BUTTON_WIDTH = 300;
 const int BUTTON_HEIGHT = 200;
@@ -46,29 +49,40 @@ int main(int argc, char **argv) {
         SDL_Initializer initializer(W_SDL_INIT_VIDEO | W_IMG_INIT_PNG);
         WWindow window("Mouse Event", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
         WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        WPNGSurface surface("/home/kirin-zhu/Projects/sdl2-snippets/mouse_event/button.png");
+        WPNGSurface surface(PROJECT_DIR + "/mouse_event/button.png");
         WTexture texture(renderer.get(), surface.get());
 
         SDL_Event e;
         bool quit = false;
+        int x, y;
         while (!quit) {
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT) {
                     quit = true;
                 } else if(e.type == SDL_MOUSEMOTION) {
-                    int x,y;
                     SDL_GetMouseState(&x, &y);
-                    std::cout << x << " " << y << std::endl;
+                    std::fill(status.begin(), status.end(), BUTTON_SPRITE_MOUSE_OUT);
+                    int area = x / BUTTON_WIDTH + (y / BUTTON_HEIGHT) * 2;
+                    status[area] = BUTTON_SPRITE_MOUSE_OVER_DOWN;
+                } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                    SDL_GetMouseState(&x, &y);
+                    std::fill(status.begin(), status.end(), BUTTON_SPRITE_MOUSE_OUT);
+                    int area = x / BUTTON_WIDTH + (y / BUTTON_HEIGHT) * 2;
+                    status[area] = BUTTON_SPRITE_MOUSE_DOWN;
+                } else if (e.type == SDL_MOUSEBUTTONUP) {
+                    SDL_GetMouseState(&x, &y);
+                    std::fill(status.begin(), status.end(), BUTTON_SPRITE_MOUSE_OUT);
+                    int area = x / BUTTON_WIDTH + (y / BUTTON_HEIGHT) * 2;
+                    status[area] = BUTTON_SPRITE_MOUSE_UP;
                 }
             }
-
+            
             SDL_SetRenderDrawColor(renderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
             SDL_RenderClear(renderer.get());
             
-            SDL_RenderCopy(renderer.get(), texture.get(), &src_arr[0], &dst_arr[0]);
-            SDL_RenderCopy(renderer.get(), texture.get(), &src_arr[1], &dst_arr[1]);
-            SDL_RenderCopy(renderer.get(), texture.get(), &src_arr[2], &dst_arr[2]);
-            SDL_RenderCopy(renderer.get(), texture.get(), &src_arr[3], &dst_arr[3]);
+            for (int i = 0; i < status.size(); i++) {
+                SDL_RenderCopy(renderer.get(), texture.get(), &src_arr[status[i]], &dst_arr[i]);
+            }
             SDL_RenderPresent(renderer.get());
         }
         
