@@ -91,4 +91,10 @@ target_link_libraries(input_and_clipboard PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_
 add_executable(audio_recorder audio_recorder/audio_recorder.cpp)
 target_link_libraries(audio_recorder PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
 
+add_executable(window_event window_event/window_event.cpp)
+target_link_libraries(window_event PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(multiple_window multiple_window/multiple_window.cpp)
+target_link_libraries(multiple_window PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
 add_executable(timer_test test/timer_test.cpp)
