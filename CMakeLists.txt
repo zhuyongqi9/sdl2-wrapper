@@ -97,4 +97,7 @@ target_link_libraries(window_event PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
 add_executable(multiple_window multiple_window/multiple_window.cpp)
 target_link_libraries(multiple_window PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
 
+add_executable(text_manipulation text_manipulation/text_manipulation.cpp)
+target_link_libraries(text_manipulation PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
 add_executable(timer_test test/timer_test.cpp)
