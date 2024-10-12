@@ -73,8 +73,8 @@ public:
     WWindow(std::string title, int x, int y,int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags);
 
     SDL_Window* get() { return window; }
-
     ~WWindow();
+    
 private:
     SDL_Window *window;
 };

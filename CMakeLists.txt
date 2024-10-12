@@ -100,4 +100,16 @@ target_link_libraries(multiple_window PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixe
 add_executable(text_manipulation text_manipulation/text_manipulation.cpp)
 target_link_libraries(text_manipulation PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
 
+add_executable(particle_engine particle_engine/particle_engine.cpp)
+target_link_libraries(particle_engine PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(tilling tilling/tilling.cpp)
+target_link_libraries(tilling PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(bitmap_fonts bitmap_fonts/bitmap_fonts.cpp)
+target_link_libraries(bitmap_fonts PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(render_to_texture render_to_texture/render_to_texture.cpp)
+target_link_libraries(render_to_texture PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
 add_executable(timer_test test/timer_test.cpp)
