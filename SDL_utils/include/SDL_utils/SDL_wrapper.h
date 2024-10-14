@@ -10,15 +10,6 @@
 #include <cstdint>
 #include <stdexcept>
 
-class WRGB {
-public:
-    WRGB() = delete;
-    WRGB(uint8_t r, uint8_t g, uint8_t b): r(r), g(g), b(b) {}
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-};
-
 class SDL_Initializer {
 public:
     SDL_Initializer() = delete;
@@ -63,6 +54,8 @@ public:
     ~Mix_Initializer();
 };
 
+class WRenderer;
+
 class WWindow {
 public:
     WWindow() = delete;
@@ -71,12 +64,28 @@ public:
 
     WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags);
     WWindow(std::string title, int x, int y,int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags);
-
-    SDL_Window* get() { return window; }
     ~WWindow();
     
+    int SCREEN_WIDTH;
+    int SCREEN_HEIGHT;
 private:
     SDL_Window *window;
+    std::shared_ptr<WRenderer> renderer; 
+};
+
+
+class WRenderer {
+public:
+    WRenderer() = delete;
+    WRenderer(const WRenderer&) = delete;
+    WRenderer& operator=(const WRenderer&) = delete;
+
+    WRenderer(SDL_Window * window, int index, uint32_t flags);
+    ~WRenderer();
+
+    SDL_Renderer* get() { return renderer; }
+private:
+    SDL_Renderer *renderer;
 };
 
 class WTexture {
@@ -94,20 +103,6 @@ public:
     int height;
 private:
     SDL_Texture* texture;
-};
-
-class WRenderer {
-public:
-    WRenderer() = delete;
-    WRenderer(const WRenderer&) = delete;
-    WRenderer& operator=(const WRenderer&) = delete;
-
-    WRenderer(SDL_Window * window, int index, uint32_t flags);
-    ~WRenderer();
-
-    SDL_Renderer* get() { return renderer; }
-private:
-    SDL_Renderer *renderer;
 };
 
 class WBMPSurface{
