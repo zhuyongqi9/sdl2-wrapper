@@ -37,7 +37,7 @@ public:
     WWindow(std::string title, int x, int y, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
     ~WWindow();
     
-    std::unique_ptr<WRenderer> create_renderer(int index, uint32_t flags);
+    WRenderer* create_renderer(int index, uint32_t flags);
     
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
@@ -58,7 +58,7 @@ public:
     void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
     void clear();
     void present();
-    std::shared_ptr<WTexture> generate_texture(WSurface *surface); 
+    WTexture* generate_texture(WSurface *surface); 
     SDL_Renderer* get() { return renderer; }
 private:
     SDL_Renderer *renderer;
@@ -102,7 +102,7 @@ private:
     SDL_Surface* surface; 
 };
 
-#ifdef SDL_IMG_VERSION
+#ifdef SDL_IMG_ENABLED
 #include <SDL2/SDL_image.h>
 class IMG_Initializer {
 public:
@@ -131,7 +131,7 @@ private:
 };
 #endif
 
-#ifdef SDL_TTF_VERSION
+#ifdef SDL_TTF_ENABLED
 #include <SDL2/SDL_ttf.h>
 class TTF_Initializer {
 public:
@@ -177,7 +177,7 @@ private:
 };
 #endif 
 
-#ifdef SDL_AUDIO_VERSION
+#ifdef SDL_AUTDIO_ENABLED
 #include <SDL2/SDL_mixer.h>
 class Mix_Initializer {
 public:

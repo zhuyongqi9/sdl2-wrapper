@@ -32,8 +32,8 @@ WWindow::~WWindow() {
     }
 }
 
-std::unique_ptr<WRenderer> WWindow::create_renderer(int index, uint32_t flags) {
-    return std::unique_ptr<WRenderer>(new WRenderer(this, index, flags));
+WRenderer* WWindow::create_renderer(int index, uint32_t flags) {
+    return new WRenderer(this, index, flags);
 }
 
 WRenderer::WRenderer(WWindow * window, int index, uint32_t flags) {
@@ -48,6 +48,10 @@ WRenderer::~WRenderer() {
     if (renderer != nullptr) {
         SDL_DestroyRenderer(renderer);
     }
+}
+
+WTexture* WRenderer::generate_texture(WSurface *surface) {
+    return new WTexture(this, surface);
 }
 
 void WRenderer::set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -92,7 +96,7 @@ WBMPSurface::~WBMPSurface() {
     }
 }
 
-#ifdef SDL_IMG_VERSION
+#ifdef SDL_IMG_ENABLED
 IMG_Initializer::IMG_Initializer(int flags) {
     int img_flags = IMG_INIT_PNG;
     //only care about img_flag
@@ -121,7 +125,7 @@ WPNGSurface::~WPNGSurface () {
 #endif 
 
 
-#ifdef SDL_TTF_VERSION
+#ifdef SDL_TTF_ENABLED
 TTF_Initializer::TTF_Initializer() {
     if (TTF_Init() == -1) {
         throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
@@ -161,7 +165,7 @@ WTTFSurface::~WTTFSurface() {
 }
 #endif
 
-#ifdef SDL_AUDIO_VERSION
+#ifdef SDL_AUTDIO_ENABLED
 Mix_Initializer::Mix_Initializer() {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         throw std::runtime_error("failed to initialize Mixer, error: " + std::string(Mix_GetError()));
