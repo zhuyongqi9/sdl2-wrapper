@@ -66,6 +66,7 @@ void WRenderer::present() {
     SDL_RenderPresent(renderer);
 }
 
+#include <iostream>
 WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->get(), surface->get());
     if (texture == nullptr) {
@@ -74,6 +75,7 @@ WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
     this->texture = texture;
     this->width = surface->get()->w;
     this->height = surface->get()->h;
+    this->renderer = renderer;
 }
 
 WTexture::~WTexture() {
@@ -82,6 +84,9 @@ WTexture::~WTexture() {
     }
 }
 
+void WTexture::render(SDL_Rect *src, SDL_Rect *dst) {
+    SDL_RenderCopy(renderer->get(), texture, src, dst);
+}
 WBMPSurface::WBMPSurface(const std::string path) {
     SDL_Surface *surface = SDL_LoadBMP(path.c_str());
     if (surface == nullptr) {

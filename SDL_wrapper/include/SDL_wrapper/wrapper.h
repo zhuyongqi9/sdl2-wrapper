@@ -76,7 +76,7 @@ public:
     WTexture(WRenderer *, WSurface *);
     ~WTexture();
 
-    void render(SDL_Rect src, SDL_Rect dst);
+    void render(SDL_Rect *src, SDL_Rect *dst);
 private:
     SDL_Texture* texture;
     WRenderer* renderer;
