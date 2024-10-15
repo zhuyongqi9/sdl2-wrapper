@@ -1,12 +1,9 @@
 #include "SDL2/SDL_rect.h"
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_surface.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
-#include <SDL2/SDL_mixer.h>
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -25,43 +22,10 @@ private:
     int flags;
 };
 
-class IMG_Initializer {
-public:
-    IMG_Initializer() = delete;
-    IMG_Initializer(const IMG_Initializer&) = delete;
-    IMG_Initializer& operator=(const IMG_Initializer&) = delete;
-    
-    IMG_Initializer(int flags);
-    ~IMG_Initializer();
-private:
-    int flags;
-};
-
-class TTF_Initializer {
-public:
-    TTF_Initializer(const TTF_Initializer&) = delete;
-    TTF_Initializer& operator=(const TTF_Initializer&) = delete;
-    
-    TTF_Initializer();
-    ~TTF_Initializer();
-private:
-    int flags;
-};
-
-class Mix_Initializer {
-public:
-    Mix_Initializer(const Mix_Initializer&) = delete;
-    Mix_Initializer& operator=(const Mix_Initializer&) = delete;
-    
-    Mix_Initializer();
-    ~Mix_Initializer();
-};
 
 class WRenderer;
 class WSurface;
-class WRenderer;
 class WTexture;
-class WTTFFont;
 
 class WWindow {
 public:
@@ -91,6 +55,9 @@ public:
     WRenderer(WWindow* window, int index, uint32_t flags);
     ~WRenderer();
     
+    void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    void clear();
+    void present();
     std::shared_ptr<WTexture> generate_texture(WSurface *surface); 
     SDL_Renderer* get() { return renderer; }
 private:
@@ -117,9 +84,7 @@ private:
 
 class WSurface {
 public:
-    virtual SDL_Surface* get();
-private:
-    SDL_Surface* surface;
+    virtual SDL_Surface* get() { return nullptr; }
 };
 
 class WBMPSurface: public WSurface {
@@ -138,6 +103,19 @@ private:
 };
 
 #ifdef SDL_IMG_VERSION
+#include <SDL2/SDL_image.h>
+class IMG_Initializer {
+public:
+    IMG_Initializer() = delete;
+    IMG_Initializer(const IMG_Initializer&) = delete;
+    IMG_Initializer& operator=(const IMG_Initializer&) = delete;
+    
+    IMG_Initializer(int flags);
+    ~IMG_Initializer();
+private:
+    int flags;
+};
+
 class WPNGSurface: public WSurface {
 public:
     WPNGSurface() = delete;
@@ -154,6 +132,18 @@ private:
 #endif
 
 #ifdef SDL_TTF_VERSION
+#include <SDL2/SDL_ttf.h>
+class TTF_Initializer {
+public:
+    TTF_Initializer(const TTF_Initializer&) = delete;
+    TTF_Initializer& operator=(const TTF_Initializer&) = delete;
+    
+    TTF_Initializer();
+    ~TTF_Initializer();
+private:
+    int flags;
+};
+
 class WTTFFont {
 public:
     static const int DEFAULT_FONT_SIZE = 16;
@@ -188,6 +178,16 @@ private:
 #endif 
 
 #ifdef SDL_AUDIO_VERSION
+#include <SDL2/SDL_mixer.h>
+class Mix_Initializer {
+public:
+    Mix_Initializer(const Mix_Initializer&) = delete;
+    Mix_Initializer& operator=(const Mix_Initializer&) = delete;
+    
+    Mix_Initializer();
+    ~Mix_Initializer();
+};
+
 class WMUS {
 public:
     WMUS() = delete;

@@ -1,6 +1,4 @@
-#include "SDL_utils/SDL_wrapper.h"
-#include <SDL2/SDL_mixer.h>
-#include <memory>
+#include "SDL_wrapper/wrapper.h"
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -11,39 +9,6 @@ SDL_Initializer::SDL_Initializer(int flags) {
 SDL_Initializer::~SDL_Initializer() {
     SDL_Quit();
 }
-
-IMG_Initializer::IMG_Initializer(int flags) {
-    int img_flags = IMG_INIT_PNG;
-    //only care about img_flag
-    if (!(IMG_Init(img_flags) & img_flags)) {
-        throw std::runtime_error("Failed to initialize SDL_image, error: " + std::string(SDL_GetError()));
-    }
-}
-
-IMG_Initializer::~IMG_Initializer(){
-    IMG_Quit();
-}
-
-TTF_Initializer::TTF_Initializer() {
-    if (TTF_Init() == -1) {
-        throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
-    }
-}
-
-TTF_Initializer::~TTF_Initializer() {
-    TTF_Quit();
-}
-
-Mix_Initializer::Mix_Initializer() {
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-        throw std::runtime_error("failed to initialize Mixer, error: " + std::string(Mix_GetError()));
-    }
-}
-
-Mix_Initializer::~Mix_Initializer() {
-    Mix_Quit();
-}
-
 
 WWindow::WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
     SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
@@ -85,6 +50,18 @@ WRenderer::~WRenderer() {
     }
 }
 
+void WRenderer::set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    SDL_SetRenderDrawColor(renderer, r, g, b, a);
+}
+
+void WRenderer::clear() {
+    SDL_RenderClear(renderer);
+}
+
+void WRenderer::present() {
+    SDL_RenderPresent(renderer);
+}
+
 WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->get(), surface->get());
     if (texture == nullptr) {
@@ -116,6 +93,18 @@ WBMPSurface::~WBMPSurface() {
 }
 
 #ifdef SDL_IMG_VERSION
+IMG_Initializer::IMG_Initializer(int flags) {
+    int img_flags = IMG_INIT_PNG;
+    //only care about img_flag
+    if (!(IMG_Init(img_flags) & img_flags)) {
+        throw std::runtime_error("Failed to initialize SDL_image, error: " + std::string(SDL_GetError()));
+    }
+}
+
+IMG_Initializer::~IMG_Initializer(){
+    IMG_Quit();
+}
+
 WPNGSurface::WPNGSurface(std::string path) {
     SDL_Surface* loadSurface = IMG_Load(path.c_str());
     if (loadSurface == nullptr) {
@@ -131,6 +120,18 @@ WPNGSurface::~WPNGSurface () {
 }
 #endif 
 
+
+#ifdef SDL_TTF_VERSION
+TTF_Initializer::TTF_Initializer() {
+    if (TTF_Init() == -1) {
+        throw std::runtime_error("Failed to initialize SDL_ttf, error: " + std::string(TTF_GetError()));
+    }
+}
+
+TTF_Initializer::~TTF_Initializer() {
+    TTF_Quit();
+}
+
 WTTFFont::WTTFFont(std::string path, int size) {
     TTF_Font *font = TTF_OpenFont(path.c_str(), size);
     if (font == nullptr) {
@@ -139,7 +140,6 @@ WTTFFont::WTTFFont(std::string path, int size) {
     this->font = font;
 }
 
-#ifdef SDL_TTF_VERSION
 WTTFFont::~WTTFFont() {
     if (font != nullptr) {
         TTF_CloseFont(font);
@@ -162,6 +162,16 @@ WTTFSurface::~WTTFSurface() {
 #endif
 
 #ifdef SDL_AUDIO_VERSION
+Mix_Initializer::Mix_Initializer() {
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        throw std::runtime_error("failed to initialize Mixer, error: " + std::string(Mix_GetError()));
+    }
+}
+
+Mix_Initializer::~Mix_Initializer() {
+    Mix_Quit();
+}
+
 WMUS::WMUS(std::string path) {
     Mix_Music *music = Mix_LoadMUS(path.c_str());
     if (music == NULL) {
