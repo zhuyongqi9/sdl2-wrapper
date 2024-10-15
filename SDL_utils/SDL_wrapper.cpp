@@ -1,5 +1,6 @@
 #include "SDL_utils/SDL_wrapper.h"
 #include <SDL2/SDL_mixer.h>
+#include <memory>
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -66,6 +67,40 @@ WWindow::~WWindow() {
     }
 }
 
+std::unique_ptr<WRenderer> WWindow::create_renderer(int index, uint32_t flags) {
+    return std::unique_ptr<WRenderer>(new WRenderer(this, index, flags));
+}
+
+WRenderer::WRenderer(WWindow * window, int index, uint32_t flags) {
+    SDL_Renderer *renderer = SDL_CreateRenderer(window->get(), index, flags);
+    if (renderer == nullptr) {
+        throw std::runtime_error("Failed to create renderer, error: " + std::string(SDL_GetError()));
+    }
+    this->renderer = renderer;
+}
+
+WRenderer::~WRenderer() {
+    if (renderer != nullptr) {
+        SDL_DestroyRenderer(renderer);
+    }
+}
+
+WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->get(), surface->get());
+    if (texture == nullptr) {
+        throw std::runtime_error("failed to create texture from surface. error: " + std::string(SDL_GetError()));
+    }
+    this->texture = texture;
+    this->width = surface->get()->w;
+    this->height = surface->get()->h;
+}
+
+WTexture::~WTexture() {
+    if (texture != nullptr) {
+        SDL_DestroyTexture(texture);
+    }
+}
+
 WBMPSurface::WBMPSurface(const std::string path) {
     SDL_Surface *surface = SDL_LoadBMP(path.c_str());
     if (surface == nullptr) {
@@ -80,6 +115,7 @@ WBMPSurface::~WBMPSurface() {
     }
 }
 
+#ifdef SDL_IMG_VERSION
 WPNGSurface::WPNGSurface(std::string path) {
     SDL_Surface* loadSurface = IMG_Load(path.c_str());
     if (loadSurface == nullptr) {
@@ -88,50 +124,12 @@ WPNGSurface::WPNGSurface(std::string path) {
     surface = loadSurface;
 }
 
-void WPNGSurface::free() {
+WPNGSurface::~WPNGSurface () {
     if (surface != nullptr) {
         SDL_FreeSurface(surface);
     }
 }
-
-WPNGSurface::~WPNGSurface () {
-    free();
-}
-
-WTexture::WTexture(SDL_Renderer *renderer, SDL_Surface *surface) {
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if (texture == nullptr) {
-        throw std::runtime_error("failed to create texture from surface. error: " + std::string(SDL_GetError()));
-    }
-    this->texture = texture;
-    this->width = surface->w;
-    this->height = surface->h;
-}
-
-
-WTexture::~WTexture() {
-    free();
-}
-
-void WTexture::free() {
-    if (texture != nullptr) {
-        SDL_DestroyTexture(texture);
-    }
-}
-
-WRenderer::WRenderer(SDL_Window * window, int index, uint32_t flags) {
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, index, flags);
-    if (renderer == nullptr) {
-        throw std::runtime_error("Failed to create renderer, error: " + std::string(SDL_GetError()));
-    }
-    this->renderer = renderer;
-}
-
-WRenderer::~WRenderer() {
-    if (renderer != nullptr) {
-        SDL_DestroyRenderer(renderer);
-    }
-}
+#endif 
 
 WTTFFont::WTTFFont(std::string path, int size) {
     TTF_Font *font = TTF_OpenFont(path.c_str(), size);
@@ -141,14 +139,15 @@ WTTFFont::WTTFFont(std::string path, int size) {
     this->font = font;
 }
 
+#ifdef SDL_TTF_VERSION
 WTTFFont::~WTTFFont() {
     if (font != nullptr) {
         TTF_CloseFont(font);
     }
 }
 
-WTTFSurface::WTTFSurface(TTF_Font* font, std::string text, SDL_Color color) {
-    SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
+WTTFSurface::WTTFSurface(WTTFFont* font, std::string text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Solid(font->get(), text.c_str(), color);
     if (surface == nullptr) {
         throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
     } 
@@ -160,7 +159,9 @@ WTTFSurface::~WTTFSurface() {
         SDL_FreeSurface(surface);
     }
 }
+#endif
 
+#ifdef SDL_AUDIO_VERSION
 WMUS::WMUS(std::string path) {
     Mix_Music *music = Mix_LoadMUS(path.c_str());
     if (music == NULL) {
@@ -184,5 +185,6 @@ WWAV::WWAV(std::string path) {
 WWAV::~WWAV() {
     Mix_FreeChunk(chunk);
 }
+#endif
 
 

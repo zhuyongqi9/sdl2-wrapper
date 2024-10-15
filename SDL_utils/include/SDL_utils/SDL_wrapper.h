@@ -1,3 +1,4 @@
+#include "SDL2/SDL_rect.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_pixels.h>
@@ -6,6 +7,8 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_mixer.h>
+#include <algorithm>
+#include <memory>
 #include <string>
 #include <cstdint>
 #include <stdexcept>
@@ -55,6 +58,10 @@ public:
 };
 
 class WRenderer;
+class WSurface;
+class WRenderer;
+class WTexture;
+class WTTFFont;
 
 class WWindow {
 public:
@@ -62,17 +69,18 @@ public:
     WWindow(const WWindow&) = delete;
     WWindow& operator=(const WWindow&) = delete;
 
-    WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags);
-    WWindow(std::string title, int x, int y,int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags);
+    WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
+    WWindow(std::string title, int x, int y, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
     ~WWindow();
+    
+    std::unique_ptr<WRenderer> create_renderer(int index, uint32_t flags);
     
     int SCREEN_WIDTH;
     int SCREEN_HEIGHT;
+    SDL_Window* get() {return window;}
 private:
     SDL_Window *window;
-    std::shared_ptr<WRenderer> renderer; 
 };
-
 
 class WRenderer {
 public:
@@ -80,9 +88,10 @@ public:
     WRenderer(const WRenderer&) = delete;
     WRenderer& operator=(const WRenderer&) = delete;
 
-    WRenderer(SDL_Window * window, int index, uint32_t flags);
+    WRenderer(WWindow* window, int index, uint32_t flags);
     ~WRenderer();
-
+    
+    std::shared_ptr<WTexture> generate_texture(WSurface *surface); 
     SDL_Renderer* get() { return renderer; }
 private:
     SDL_Renderer *renderer;
@@ -90,36 +99,46 @@ private:
 
 class WTexture {
 public:
+    int width;
+    int height;
+    
     WTexture() = delete;
     WTexture(const WTexture&) = delete;
     WTexture& operator=(const WTexture&) = delete;
 
-    WTexture(SDL_Renderer *renderer, SDL_Surface *surface);
+    WTexture(WRenderer *, WSurface *);
     ~WTexture();
-    void free();
-    SDL_Texture* get() {return texture;}; 
 
-    int width;
-    int height;
+    void render(SDL_Rect src, SDL_Rect dst);
 private:
     SDL_Texture* texture;
+    WRenderer* renderer;
 };
 
-class WBMPSurface{
+class WSurface {
+public:
+    virtual SDL_Surface* get();
+private:
+    SDL_Surface* surface;
+};
+
+class WBMPSurface: public WSurface {
 public:
     WBMPSurface() = delete;
     WBMPSurface(const WBMPSurface &) = delete;
     WBMPSurface& operator=(const WBMPSurface&) = delete;
     
     WBMPSurface(std::string);
+    WBMPSurface(std::string, uint8_t r, uint8_t g, uint8_t b);
     ~WBMPSurface();
    
-    SDL_Surface* get() { return surface; } 
+    virtual SDL_Surface* get() { return surface; } 
 private:
     SDL_Surface* surface; 
 };
 
-class WPNGSurface {
+#ifdef SDL_IMG_VERSION
+class WPNGSurface: public WSurface {
 public:
     WPNGSurface() = delete;
     WPNGSurface& operator=(const WPNGSurface&) = delete;
@@ -128,41 +147,47 @@ public:
 
     ~WPNGSurface();
 
-    SDL_Surface* get() { return surface; };
-    void free();
+    virtual SDL_Surface* get() { return surface; };
 private:
     SDL_Surface* surface;
 };
+#endif
 
+#ifdef SDL_TTF_VERSION
 class WTTFFont {
 public:
+    static const int DEFAULT_FONT_SIZE = 16;
     WTTFFont() = delete;
     WTTFFont(const WTTFFont&) = delete;
     WTTFFont& operator=(const WTTFFont&) = delete;
 
+    WTTFFont(std::string path);
     WTTFFont(std::string path, int size);
     ~WTTFFont();
 
     TTF_Font* get() { return font; } 
 private:
     TTF_Font *font;
+    int size;
 };
 
-class WTTFSurface {
+class WTTFSurface: public WSurface {
 public:
     WTTFSurface() = delete;
     WTTFSurface(const WTTFSurface&) = delete;
     WTTFSurface& operator=(const WTTFSurface&) = delete;
 
-    WTTFSurface(TTF_Font* , std::string , SDL_Color );
+    WTTFSurface(WTTFFont* font, std::string , SDL_Color);
     ~WTTFSurface();
 
-    SDL_Surface* get() { return surface; };
+    virtual SDL_Surface* get() { return surface; };
     void free();
 private:
     SDL_Surface* surface;
 };
+#endif 
 
+#ifdef SDL_AUDIO_VERSION
 class WMUS {
 public:
     WMUS() = delete;
@@ -190,4 +215,5 @@ public:
 private:
     Mix_Chunk* chunk;
 };
+#endif
 
