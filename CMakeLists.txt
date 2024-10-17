@@ -19,8 +19,6 @@ add_executable(stretch stretch/stretch.cpp)
 
 add_executable(texture_png texture_png/texture_png.cpp)
 
-add_executable(texture_render texture_render/texture_render.cpp)
-
 add_executable(geomoetry_render geomoetry_render/geomoetry_render.cpp)
 
 add_executable(view_point view_point/view_point.cpp)
