@@ -1,4 +1,4 @@
-#include "SDL2/SDL_rect.h"
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_surface.h>
@@ -58,7 +58,8 @@ public:
     void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
     void clear();
     void present();
-    WTexture* generate_texture(WSurface *surface); 
+    WTexture* create_texture(WSurface *surface); 
+    WTexture* create_texture(WSurface &&surface); 
     SDL_Renderer* get() { return renderer; }
 private:
     SDL_Renderer *renderer;
@@ -74,6 +75,7 @@ public:
     WTexture& operator=(const WTexture&) = delete;
 
     WTexture(WRenderer *, WSurface *);
+    WTexture(WRenderer *, WSurface &&);
     ~WTexture();
 
     void render(SDL_Rect *src, SDL_Rect *dst);
@@ -177,7 +179,7 @@ private:
 };
 #endif 
 
-#ifdef SDL_AUTDIO_ENABLED
+#ifdef SDL_MIX_ENABLED
 #include <SDL2/SDL_mixer.h>
 class Mix_Initializer {
 public:

@@ -50,8 +50,12 @@ WRenderer::~WRenderer() {
     }
 }
 
-WTexture* WRenderer::generate_texture(WSurface *surface) {
+WTexture* WRenderer::create_texture(WSurface *surface) {
     return new WTexture(this, surface);
+}
+
+WTexture* WRenderer::create_texture(WSurface &&surface) {
+    return new WTexture(this, &surface);
 }
 
 void WRenderer::set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -75,6 +79,17 @@ WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
     this->texture = texture;
     this->width = surface->get()->w;
     this->height = surface->get()->h;
+    this->renderer = renderer;
+}
+
+WTexture::WTexture(WRenderer *renderer, WSurface &&surface) {
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->get(), surface.get());
+    if (texture == nullptr) {
+        throw std::runtime_error("failed to create texture from surface. error: " + std::string(SDL_GetError()));
+    }
+    this->texture = texture;
+    this->width = surface.get()->w;
+    this->height = surface.get()->h;
     this->renderer = renderer;
 }
 
@@ -170,7 +185,7 @@ WTTFSurface::~WTTFSurface() {
 }
 #endif
 
-#ifdef SDL_AUTDIO_ENABLED
+#ifdef SDL_MIX_ENABLED
 Mix_Initializer::Mix_Initializer() {
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
         throw std::runtime_error("failed to initialize Mixer, error: " + std::string(Mix_GetError()));
