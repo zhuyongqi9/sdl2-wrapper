@@ -184,6 +184,7 @@ public:
     WTTFSurface& operator=(const WTTFSurface&) = delete;
 
     WTTFSurface(WTTFFont* font, std::string , SDL_Color);
+    WTTFSurface(WTTFFont* font, std::string &, SDL_Color);
     ~WTTFSurface();
 
     virtual SDL_Surface* get() { return surface; };
@@ -214,6 +215,7 @@ public:
     ~WMUS();
     
     Mix_Music* get() { return music; }
+    void play(int loops);
 private:
     Mix_Music* music;
 };
@@ -227,6 +229,7 @@ public:
     WWAV(std::string path);
     ~WWAV();
     
+    void play_channel(int channel, int loops);
     Mix_Chunk* get() { return chunk; }
 private:
     Mix_Chunk* chunk;

@@ -1,5 +1,6 @@
 #include "SDL_wrapper/wrapper.h"
 #include "SDL2/SDL_blendmode.h"
+#include "SDL2/SDL_mixer.h"
 #include "SDL2/SDL_pixels.h"
 #include "SDL2/SDL_rect.h"
 #include "SDL2/SDL_render.h"
@@ -237,6 +238,14 @@ WTTFSurface::WTTFSurface(WTTFFont* font, std::string text, SDL_Color color) {
     this->surface = surface;
 }
 
+WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Solid(font->get(), text.c_str(), color);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
 WTTFSurface::~WTTFSurface() {
     if (surface != nullptr) {
         SDL_FreeSurface(surface);
@@ -267,6 +276,10 @@ WMUS::~WMUS() {
     Mix_FreeMusic(music);
 }
 
+void WMUS::play(int loops) {
+    Mix_PlayMusic(music, loops);
+}
+
 WWAV::WWAV(std::string path) {
     Mix_Chunk *chunk = Mix_LoadWAV(path.c_str());
     if (chunk == NULL) {
@@ -277,6 +290,10 @@ WWAV::WWAV(std::string path) {
 
 WWAV::~WWAV() {
     Mix_FreeChunk(chunk);
+}
+
+void WWAV::play_channel(int channel, int loops) {
+    Mix_PlayChannel(channel, chunk, loops);
 }
 #endif
 
