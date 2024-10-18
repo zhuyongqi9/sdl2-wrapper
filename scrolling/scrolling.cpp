@@ -1,106 +1,116 @@
-#include <SDL2/SDL_pixels.h>
 #include <iostream>
-#include "SDL_utils/SDL_wrapper.h"
+#include "SDL_wrapper/wrapper.h"
+#include <ratio>
 #include <string>
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR); 
 
-const int SCALE = 1;
 const int SCREEN_WIDTH = 800 * SCALE;
 const int SCREEN_HEIGHT = 600 * SCALE;
 
-const int SPEED = 10;
-class Point {
+
+class ScrollingBackground {
+public: 
+    ScrollingBackground(WRenderer *renderer): renderer(renderer)
+    {
+        background.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/scrolling/bg.png")));
+        x = y = 0;
+        speed = 10;
+    }
+    
+    void move_up() { y -= speed; if (y < 0) y = 0;}
+    void move_down() { y += speed; if ( y > background->height - SCREEN_HEIGHT) y = background->height - SCREEN_HEIGHT;}
+    void move_left() { x -= speed; if (x < 0) x = 0;}
+    void move_right() { x += speed; if (x > background->width - SCREEN_WIDTH) x = background->width - SCREEN_WIDTH;}
+    
+    void render() {
+        SDL_Rect src = { x, y, SCREEN_WIDTH, SCREEN_HEIGHT};
+        background->render(&src, nullptr);
+    }
+    
+private:
+    WRenderer *renderer;
+    std::unique_ptr<WTexture> background;
+    int x;
+    int y;
+    int speed;
+};
+
+ScrollingBackground *background;
+
+class Dot {
 public:
-    Point(SDL_Renderer *render, std::string path);
-    ~Point();
+    Dot(WRenderer *renderer, double ratio):renderer(renderer) {
+        WBMPSurface surface(PRO_DIR + "/scrolling/dot.bmp");
+        SDL_SetColorKey(surface.get(), SDL_TRUE, SDL_MapRGB(surface.get()->format, 255, 255, 255));
+        dot.reset(renderer->create_texture(&surface));
+        radius  = dot->width / 2;
+        radius = (int) radius * ratio;
+        x = radius;
+        y = radius;
+        
+        speed = 10;
+    }
     
     void move_up() {  y -= speed; if ( y < radius ) y = radius; }
     void move_down() {  y += speed; if (y > SCREEN_HEIGHT - radius ) y = SCREEN_HEIGHT - radius;}
     void move_left() {  x -= speed; if (x < radius ) x = radius; }
     void move_right() {  x += speed; if (x > SCREEN_WIDTH - radius ) x = SCREEN_WIDTH - radius; }
     
-    void set_radius(int raidus) { this->radius = raidus; }
-    void set_radius_radio(double ratio) { this->radius = (int) radius * ratio; }
     void set_speed(int speed) { this->speed = speed; }
     
-    bool right_edge() { return x == SCREEN_WIDTH - radius;}
-    bool left_edge() { return x == radius;}
-    bool up_edge() { return y == radius; }
-    bool down_edge() { return y == SCREEN_HEIGHT - radius; }
+    bool touch_right_edge() { return x >= SCREEN_WIDTH - radius;}
+    bool touch_left_edge() { return x <= radius;}
+    bool touch_up_edge() { return y <= radius; }
+    bool touch_down_edge() { return y >= SCREEN_HEIGHT - radius; }
     
-    void render();
+    void handle_event(SDL_Event &e) {
+        if (e.type == SDL_KEYDOWN) {
+            switch(e.key.keysym.sym) {
+                case SDLK_UP:
+                    move_up();
+                    if (touch_up_edge()) background->move_up();
+                    break;
+                case SDLK_DOWN:
+                    move_down();
+                    if (touch_down_edge()) background->move_down();
+                    break;
+                case SDLK_LEFT:
+                    move_left();
+                    if (touch_left_edge()) background->move_left();
+                    break;
+                case SDLK_RIGHT:
+                    move_right();
+                    if (touch_right_edge()) background->move_right();
+                    break;
+            }
+        }
+    }
+    
+    void render() {
+        SDL_Rect dst = { x-radius, y-radius, radius*2, radius*2};
+        dot->render(nullptr, &dst);
+    }
 private:
     int x;    
     int y;
     int radius;
     int speed;
-    SDL_Renderer *renderer;
-    WTexture *texture;
+    WRenderer *renderer;
+    std::unique_ptr<WTexture> dot;
 };
 
-Point::Point(SDL_Renderer *renderer, std::string path): renderer(renderer)
-{
-    WBMPSurface surface(path);
-    SDL_SetColorKey(surface.get(), SDL_TRUE, SDL_MapRGB(surface.get()->format, 255, 255, 255));
-    texture = new WTexture(renderer, surface.get());
-    radius  = texture->width / 2;
-    x = radius;
-    y = radius;
-    speed = SPEED;
-}
-
-Point::~Point() 
-{
-    if (texture == nullptr) {
-        delete texture;
-    }
-}
-
-void Point::render() {
-    SDL_Rect dst = { x-radius, y-radius, radius*2, radius*2};
-    SDL_RenderCopy(renderer, texture->get(), NULL, &dst);
-}
-
-class ScrollingBackground {
-public: 
-    ScrollingBackground(SDL_Renderer *renderer, std::string path): renderer(renderer)
-    {
-        WPNGSurface surface_back(path);
-        texture = new WTexture(renderer, surface_back.get());
-        x = y = 0;
-        speed = SPEED;
-    }
-    
-    void move_up() { y -= speed; if (y < 0) y = 0;}
-    void move_down() { y += speed; if ( y > texture->height - SCREEN_HEIGHT) y = texture->height - SCREEN_HEIGHT;}
-    void move_left() { x -= speed; if (x < 0) x = 0;}
-    void move_right() { x += speed; if (x > texture->width - SCREEN_WIDTH) x = texture->width - SCREEN_WIDTH;}
-    
-    void render() {
-        SDL_Rect src = { x, y, SCREEN_WIDTH, SCREEN_HEIGHT};
-        SDL_RenderCopy(renderer, texture->get(), &src, NULL);
-    }
-private:
-    SDL_Renderer *renderer;
-    WTexture *texture;
-    int x;
-    int y;
-    int speed;
-};
 
 int main(int argc, char **argv) {
     try {
-        SDL_Initializer sdl_initializer(SDL_INIT_VIDEO);
-        IMG_Initializer img_initializer(IMG_INIT_PNG);
-        WWindow window("Scrolling", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
+        SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
+        TTF_Initializer ttf_initializer;
         
-        ScrollingBackground background(renderer.get(), PRO_DIR + "/scrolling/bg.png");
+        std::unique_ptr<WWindow> window(new WWindow("Scrolling", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+        std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC));
         
-        Point point(renderer.get(), PRO_DIR + "/scrolling/dot.bmp");
-        point.set_radius_radio(3);
-        int x = 0, y = 0;
+        Dot dot(renderer.get(), 3);
+        background = new ScrollingBackground(renderer.get());
         
         SDL_Event e;
         bool quit = false;
@@ -108,35 +118,15 @@ int main(int argc, char **argv) {
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT) {
                     quit = true;
-                } else if (e.type == SDL_KEYDOWN) {
-                    switch (e.key.keysym.sym) {
-                        case SDLK_UP:
-                            point.move_up();
-                            if (point.up_edge()) background.move_up();
-                            break;
-                        case SDLK_DOWN:
-                            point.move_down();
-                            if (point.down_edge()) background.move_down();
-                            break;
-                        case SDLK_LEFT:
-                            point.move_left();
-                            if (point.left_edge()) background.move_left();
-                            break;
-                        case SDLK_RIGHT:
-                            point.move_right();
-                            if (point.right_edge()) background.move_right();
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                }             
+                dot.handle_event(e);
             }
             
-            SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
-            SDL_RenderClear(renderer.get());
-            background.render();
-            point.render();
-            SDL_RenderPresent(renderer.get());
+            renderer->set_color(255, 255, 255, 255);
+            renderer->clear();
+            background->render();
+            dot.render();
+            renderer->present();
         }
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
