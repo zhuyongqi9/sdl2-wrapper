@@ -38,29 +38,25 @@ add_executable(texture_alpha texture_alpha/texture_alpha.cpp)
 
 add_executable(animation animation/animation.cpp)
 
-add_executable(rotation_flipping rotation_flipping/rotation_flipping.cpp)
+add_executable(texture_flipping texture_flipping/texture_flipping.cpp)
 
-add_executable(true_type_font true_type_font/true_type_font.cpp)
+add_executable(texture_rotation texture_rotation/texture_rotation.cpp)
 
-add_executable(mouse_event mouse_event/mouse_event.cpp)
+add_executable(ttf ttf/ttf.cpp)
 
-add_executable(key_state key_state/key_state.cpp)
-
-add_executable(sound_effects_and_music sound_effects_and_music/sound_effects_and_music.cpp)
-
-add_executable(timing timing/timing.cpp)
+add_executable(handle_mouse_event handle_mouse_event/handle_mouse_event.cpp)
 
 add_executable(frame_rate frame_rate/frame_rate.cpp)
 
-add_executable(cap_frame_rate cap_frame_rate/cap_frame_rate.cpp)
-
-add_executable(motion motion/motion.cpp)
+add_executable(frame_rate_cap frame_rate_cap/frame_rate_cap.cpp)
 
 add_executable(scrolling scrolling/scrolling.cpp)
 
 add_executable(infinite_background infinite_background/infinite_background.cpp)
 
 add_executable(input_and_clipboard input_and_clipboard/input_and_clipboard.cpp)
+
+add_executable(sound_effects_and_music sound_effects_and_music/sound_effects_and_music.cpp)
 
 add_executable(audio_recorder audio_recorder/audio_recorder.cpp)
 
