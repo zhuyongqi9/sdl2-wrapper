@@ -30,7 +30,7 @@ if (SDL_IMG_ENABLED)
     find_sdl_path(SDL2_image_path SDL2_image)
     message(${SDL2_image_path})
     target_link_libraries(SDL_wrapper PRIVATE ${SDL2_image_path})
-    target_compile_definitions(SDL_wrapper PRIVATE "SDL_IMG_ENABLED")
+    target_compile_definitions(SDL_wrapper PUBLIC "SDL_IMG_ENABLED")
 endif()
 
 if (SDL_TTF_ENABLED)

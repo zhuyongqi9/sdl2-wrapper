@@ -1,4 +1,8 @@
 #include "SDL_wrapper/wrapper.h"
+#include "SDL2/SDL_blendmode.h"
+#include "SDL2/SDL_pixels.h"
+#include "SDL2/SDL_rect.h"
+#include "SDL2/SDL_render.h"
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -70,6 +74,38 @@ void WRenderer::present() {
     SDL_RenderPresent(renderer);
 }
 
+void WRenderer::fill_rect(SDL_Rect *rect) {
+    SDL_RenderFillRect(renderer, rect);
+}
+
+void WRenderer::draw_rect(SDL_Rect *rect) {
+    SDL_RenderDrawRect(renderer, rect);
+}
+
+void WRenderer::draw_line(SDL_Point *start, SDL_Point *end) {
+    SDL_RenderDrawLine(renderer, start->x, start->y, end->x, end->y);
+}
+
+void WRenderer::draw_line(SDL_Point &&start, SDL_Point &&end) {
+    SDL_RenderDrawLine(renderer, start.x, start.y, end.x, end.y);
+}
+
+void WRenderer::draw_point(SDL_Point *point) {
+    SDL_RenderDrawPoint(renderer, point->x, point->y);
+}
+
+void WRenderer::draw_point(SDL_Point point) {
+    SDL_RenderDrawPoint(renderer, point.x, point.y);
+}
+
+void WRenderer::set_viewport(SDL_Rect *rect) {
+    SDL_RenderSetViewport(renderer, rect);
+}
+
+void WRenderer::set_viewport(SDL_Rect &&rect) {
+    SDL_RenderSetViewport(renderer, &rect);
+}
+
 #include <iostream>
 WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->get(), surface->get());
@@ -102,6 +138,21 @@ WTexture::~WTexture() {
 void WTexture::render(SDL_Rect *src, SDL_Rect *dst) {
     SDL_RenderCopy(renderer->get(), texture, src, dst);
 }
+
+void WTexture::renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip) {
+    SDL_RenderCopyEx(renderer->get(), texture, src, dst, angle, point, flip);
+}
+
+
+void WTexture::set_color_mod(int8_t r, int8_t g, int8_t b) {
+    SDL_SetTextureColorMod(texture, r, g, b);
+}
+
+void WTexture::set_alpha_mod(uint8_t alpha) {
+    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureAlphaMod(texture, alpha);
+}
+
 WBMPSurface::WBMPSurface(const std::string path) {
     SDL_Surface *surface = SDL_LoadBMP(path.c_str());
     if (surface == nullptr) {
@@ -114,6 +165,10 @@ WBMPSurface::~WBMPSurface() {
     if (surface != nullptr) {
         SDL_FreeSurface(surface);
     }
+}
+
+void WBMPSurface::set_color_key(uint8_t r, uint8_t g, uint8_t b) {
+    SDL_SetColorKey(surface, SDL_ENABLE, SDL_MapRGB(surface->format, r, g, b));
 }
 
 #ifdef SDL_IMG_ENABLED
@@ -141,6 +196,10 @@ WPNGSurface::~WPNGSurface () {
     if (surface != nullptr) {
         SDL_FreeSurface(surface);
     }
+}
+
+void WPNGSurface::set_color_key(uint8_t r, uint8_t g, uint8_t b) {
+    SDL_SetColorKey(surface, SDL_ENABLE, SDL_MapRGB(surface->format, r, g, b));
 }
 #endif 
 

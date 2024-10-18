@@ -7,6 +7,11 @@ add_subdirectory(SDL_wrapper)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 11)
 
+if (APPLE)
+    add_compile_definitions(SCALE=1) 
+else()
+    add_compile_definitions(SCALE=2) 
+endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)    
 link_libraries(SDL_wrapper)
@@ -19,17 +24,17 @@ add_executable(stretch stretch/stretch.cpp)
 
 add_executable(texture_png texture_png/texture_png.cpp)
 
-add_executable(geomoetry_render geomoetry_render/geomoetry_render.cpp)
+add_executable(renderer_geomoetry renderer_geomoetry/renderer_geomoetry.cpp)
 
-add_executable(view_point view_point/view_point.cpp)
+add_executable(renderer_viewport renderer_viewport/renderer_viewport.cpp)
 
-add_executable(color_keying color_keying/color_keying.cpp)
+add_executable(surface_color_key surface_color_key/surface_color_key.cpp)
 
-add_executable(clip_rendering clip_rendering/clip_rendering.cpp)
+add_executable(texture_clip texture_clip/texture_clip.cpp)
 
-add_executable(color_modulation color_modulation/color_modulation.cpp)
+add_executable(texture_modulation texture_modulation/texture_modulation.cpp)
 
-add_executable(alpha_blending alpha_blending/alpha_blending.cpp)
+add_executable(texture_alpha texture_alpha/texture_alpha.cpp)
 
 add_executable(animation animation/animation.cpp)
 

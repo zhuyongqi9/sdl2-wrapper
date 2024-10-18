@@ -58,6 +58,15 @@ public:
     void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
     void clear();
     void present();
+    void draw_rect(SDL_Rect *rect);
+    void fill_rect(SDL_Rect *rect);
+    void draw_line(SDL_Point *start, SDL_Point *end);
+    void draw_line(SDL_Point &&start, SDL_Point &&end);
+    void draw_point(SDL_Point *point);
+    void draw_point(SDL_Point point);
+    void set_viewport(SDL_Rect *rect);
+    void set_viewport(SDL_Rect &&rect);
+    
     WTexture* create_texture(WSurface *surface); 
     WTexture* create_texture(WSurface &&surface); 
     SDL_Renderer* get() { return renderer; }
@@ -79,6 +88,9 @@ public:
     ~WTexture();
 
     void render(SDL_Rect *src, SDL_Rect *dst);
+    void renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip);
+    void set_color_mod(int8_t r, int8_t g, int8_t b);
+    void set_alpha_mod(uint8_t alpha);
 private:
     SDL_Texture* texture;
     WRenderer* renderer;
@@ -95,9 +107,10 @@ public:
     WBMPSurface(const WBMPSurface &) = delete;
     WBMPSurface& operator=(const WBMPSurface&) = delete;
     
-    WBMPSurface(std::string);
-    WBMPSurface(std::string, uint8_t r, uint8_t g, uint8_t b);
+    explicit WBMPSurface(std::string);
     ~WBMPSurface();
+    
+    void set_color_key(uint8_t r, uint8_t g, uint8_t b);
    
     virtual SDL_Surface* get() { return surface; } 
 private:
@@ -124,8 +137,9 @@ public:
     WPNGSurface& operator=(const WPNGSurface&) = delete;
 
     explicit WPNGSurface(std::string path);
-
     ~WPNGSurface();
+    
+    void set_color_key(uint8_t r, uint8_t g, uint8_t b);
 
     virtual SDL_Surface* get() { return surface; };
 private:
