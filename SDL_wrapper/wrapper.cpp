@@ -230,7 +230,7 @@ WTTFFont::~WTTFFont() {
     }
 }
 
-WTTFSurface::WTTFSurface(WTTFFont* font, std::string text, SDL_Color color) {
+WTTFSurface::WTTFSurface(WTTFFont* font, std::string &&text, SDL_Color color) {
     SDL_Surface *surface = TTF_RenderText_Solid(font->get(), text.c_str(), color);
     if (surface == nullptr) {
         throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
@@ -240,6 +240,14 @@ WTTFSurface::WTTFSurface(WTTFFont* font, std::string text, SDL_Color color) {
 
 WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color) {
     SDL_Surface *surface = TTF_RenderText_Solid(font->get(), text.c_str(), color);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color, int wrap_length) {
+    SDL_Surface *surface = TTF_RenderText_Solid_Wrapped(font->get(), text.c_str(), color, wrap_length);
     if (surface == nullptr) {
         throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
     } 

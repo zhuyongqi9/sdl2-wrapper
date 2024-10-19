@@ -54,7 +54,7 @@ add_executable(background_scrolling background_scrolling/background_scrolling.cp
 
 add_executable(background_infinite background_infinite/background_infinite.cpp)
 
-add_executable(input_and_clipboard input_and_clipboard/input_and_clipboard.cpp)
+add_executable(handle_input_and_clipboard handle_input_and_clipboard/handle_input_and_clipboard.cpp)
 
 add_executable(sound_effects_and_music sound_effects_and_music/sound_effects_and_music.cpp)
 

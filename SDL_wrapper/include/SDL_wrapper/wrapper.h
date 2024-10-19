@@ -1,3 +1,4 @@
+#include <SDL2/SDL_clipboard.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_pixels.h>
@@ -117,6 +118,26 @@ private:
     SDL_Surface* surface; 
 };
 
+class WClipboardText {
+public:
+    WClipboardText(const WClipboardText&) = delete; 
+    WClipboardText& operator=(const WClipboardText &) = delete;
+    
+    WClipboardText() {
+        this->str = SDL_GetClipboardText(); 
+    }
+    
+    char* get() {return str;}
+    
+    ~WClipboardText() {
+        if (str != nullptr) {
+            SDL_free(str);
+        }
+    }
+private:
+    char *str;
+};
+
 #ifdef SDL_IMG_ENABLED
 #include <SDL2/SDL_image.h>
 class IMG_Initializer {
@@ -183,8 +204,9 @@ public:
     WTTFSurface(const WTTFSurface&) = delete;
     WTTFSurface& operator=(const WTTFSurface&) = delete;
 
-    WTTFSurface(WTTFFont* font, std::string , SDL_Color);
+    WTTFSurface(WTTFFont* font, std::string &&, SDL_Color);
     WTTFSurface(WTTFFont* font, std::string &, SDL_Color);
+    WTTFSurface(WTTFFont* font, std::string &, SDL_Color, int wrap_length);
     ~WTTFSurface();
 
     virtual SDL_Surface* get() { return surface; };
