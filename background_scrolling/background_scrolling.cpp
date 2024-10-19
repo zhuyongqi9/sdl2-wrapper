@@ -12,7 +12,7 @@ class ScrollingBackground {
 public: 
     ScrollingBackground(WRenderer *renderer): renderer(renderer)
     {
-        background.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/scrolling/bg.png")));
+        background.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/background_scrolling/bg.png")));
         x = y = 0;
         speed = 10;
     }
@@ -40,7 +40,7 @@ ScrollingBackground *background;
 class Dot {
 public:
     Dot(WRenderer *renderer, double ratio):renderer(renderer) {
-        WBMPSurface surface(PRO_DIR + "/scrolling/dot.bmp");
+        WBMPSurface surface(PRO_DIR + "/background_scrolling/dot.bmp");
         SDL_SetColorKey(surface.get(), SDL_TRUE, SDL_MapRGB(surface.get()->format, 255, 255, 255));
         dot.reset(renderer->create_texture(&surface));
         radius  = dot->width / 2;

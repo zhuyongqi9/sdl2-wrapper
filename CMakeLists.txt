@@ -50,9 +50,9 @@ add_executable(frame_rate frame_rate/frame_rate.cpp)
 
 add_executable(frame_rate_cap frame_rate_cap/frame_rate_cap.cpp)
 
-add_executable(scrolling scrolling/scrolling.cpp)
+add_executable(background_scrolling background_scrolling/background_scrolling.cpp)
 
-add_executable(infinite_background infinite_background/infinite_background.cpp)
+add_executable(background_infinite background_infinite/background_infinite.cpp)
 
 add_executable(input_and_clipboard input_and_clipboard/input_and_clipboard.cpp)
 
