@@ -107,7 +107,6 @@ void WRenderer::set_viewport(SDL_Rect &&rect) {
     SDL_RenderSetViewport(renderer, &rect);
 }
 
-#include <iostream>
 WTexture::WTexture(WRenderer *renderer, WSurface *surface) {
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer->get(), surface->get());
     if (texture == nullptr) {
