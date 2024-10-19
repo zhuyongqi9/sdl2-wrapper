@@ -1,6 +1,5 @@
 #include <iostream>
 #include "SDL_wrapper/wrapper.h"
-#include <ratio>
 #include <string>
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR); 

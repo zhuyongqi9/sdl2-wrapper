@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 11)
 if (APPLE)
     add_compile_definitions(SCALE=1) 
 else()
-    add_compile_definitions(SCALE=2) 
+    add_compile_definitions(SCALE=1) 
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)    
