@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
         SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
         IMG_Initializer img_initializer(IMG_INIT_PNG);
         
-        std::unique_ptr<WWindow> window(new WWindow("Texture PNG", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+        std::unique_ptr<WWindow> window(new WWindow("Texture Rotation", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
         std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED));
         
         Arrow arrow(renderer.get());
