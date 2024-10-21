@@ -62,6 +62,7 @@ public:
     void draw_rect(SDL_Rect *rect);
     void draw_rect(SDL_Rect *rect, SDL_Color color);
     void fill_rect(SDL_Rect *rect);
+    void fill_rect(SDL_Rect *rect, SDL_Color color);
     void draw_line(SDL_Point *start, SDL_Point *end);
     void draw_line(SDL_Point &&start, SDL_Point &&end);
     void draw_point(SDL_Point *point);
@@ -199,16 +200,50 @@ private:
     int size;
 };
 
-class WTTFSurface: public WSurface {
+class WTTFSurfaceSolid: public WSurface {
 public:
-    WTTFSurface() = delete;
-    WTTFSurface(const WTTFSurface&) = delete;
-    WTTFSurface& operator=(const WTTFSurface&) = delete;
+    WTTFSurfaceSolid() = delete;
+    WTTFSurfaceSolid(const WTTFSurfaceSolid&) = delete;
+    WTTFSurfaceSolid& operator=(const WTTFSurfaceSolid&) = delete;
 
-    WTTFSurface(WTTFFont* font, std::string &&, SDL_Color);
-    WTTFSurface(WTTFFont* font, std::string &, SDL_Color);
-    WTTFSurface(WTTFFont* font, std::string &, SDL_Color, int wrap_length);
-    ~WTTFSurface();
+    WTTFSurfaceSolid(WTTFFont* font, std::string &&, SDL_Color);
+    WTTFSurfaceSolid(WTTFFont* font, std::string &, SDL_Color);
+    WTTFSurfaceSolid(WTTFFont* font, std::string &, SDL_Color, int wrap_length);
+    ~WTTFSurfaceSolid();
+
+    virtual SDL_Surface* get() { return surface; };
+    void free();
+private:
+    SDL_Surface* surface;
+};
+
+class WTTFSurfaceShaded: public WSurface {
+public:
+    WTTFSurfaceShaded() = delete;
+    WTTFSurfaceShaded(const WTTFSurfaceShaded&) = delete;
+    WTTFSurfaceShaded& operator=(const WTTFSurfaceShaded&) = delete;
+
+    WTTFSurfaceShaded(WTTFFont* font, std::string &&, SDL_Color);
+    WTTFSurfaceShaded(WTTFFont* font, std::string &, SDL_Color);
+    WTTFSurfaceShaded(WTTFFont* font, std::string &, SDL_Color, int wrap_length);
+    ~WTTFSurfaceShaded();
+
+    virtual SDL_Surface* get() { return surface; };
+    void free();
+private:
+    SDL_Surface* surface;
+};
+
+class WTTFSurfaceBlended: public WSurface {
+public:
+    WTTFSurfaceBlended() = delete;
+    WTTFSurfaceBlended(const WTTFSurfaceBlended&) = delete;
+    WTTFSurfaceBlended& operator=(const WTTFSurfaceBlended&) = delete;
+
+    WTTFSurfaceBlended(WTTFFont* font, std::string &&, SDL_Color);
+    WTTFSurfaceBlended(WTTFFont* font, std::string &, SDL_Color);
+    WTTFSurfaceBlended(WTTFFont* font, std::string &, SDL_Color, int wrap_length);
+    ~WTTFSurfaceBlended();
 
     virtual SDL_Surface* get() { return surface; };
     void free();

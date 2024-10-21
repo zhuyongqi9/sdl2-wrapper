@@ -77,3 +77,7 @@ add_executable(render_to_texture render_to_texture/render_to_texture.cpp)
 add_executable(frame_independent_movement frame_independent_movement/frame_independent_movement.cpp)
 
 add_executable(timer_test test/timer_test.cpp)
+
+# self-made widgets
+add_executable(toggle_list widgets/toggle_list/toggle_list.cpp)
+add_executable(selected_list widgets/selected_list/selected_list.cpp)

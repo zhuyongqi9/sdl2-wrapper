@@ -79,6 +79,14 @@ void WRenderer::fill_rect(SDL_Rect *rect) {
     SDL_RenderFillRect(renderer, rect);
 }
 
+void WRenderer::fill_rect(SDL_Rect *rect, SDL_Color color) {
+    uint8_t ori_r, ori_g, ori_b, ori_a;
+    SDL_GetRenderDrawColor(renderer, &ori_r, &ori_g, &ori_b, &ori_a);
+    this->set_color(color.r, color.g, color.b, color.a);
+    fill_rect(rect);
+    this->set_color(ori_r, ori_g, ori_b, ori_a);
+}
+
 void WRenderer::draw_rect(SDL_Rect *rect) {
     SDL_RenderDrawRect(renderer, rect);
 }
@@ -237,7 +245,7 @@ WTTFFont::~WTTFFont() {
     }
 }
 
-WTTFSurface::WTTFSurface(WTTFFont* font, std::string &&text, SDL_Color color) {
+WTTFSurfaceSolid::WTTFSurfaceSolid(WTTFFont* font, std::string &&text, SDL_Color color) {
     SDL_Surface *surface = TTF_RenderText_Solid(font->get(), text.c_str(), color);
     if (surface == nullptr) {
         throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
@@ -245,7 +253,7 @@ WTTFSurface::WTTFSurface(WTTFFont* font, std::string &&text, SDL_Color color) {
     this->surface = surface;
 }
 
-WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color) {
+WTTFSurfaceSolid::WTTFSurfaceSolid(WTTFFont* font, std::string &text, SDL_Color color) {
     SDL_Surface *surface = TTF_RenderText_Solid(font->get(), text.c_str(), color);
     if (surface == nullptr) {
         throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
@@ -253,7 +261,7 @@ WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color) {
     this->surface = surface;
 }
 
-WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color, int wrap_length) {
+WTTFSurfaceSolid::WTTFSurfaceSolid(WTTFFont* font, std::string &text, SDL_Color color, int wrap_length) {
     SDL_Surface *surface = TTF_RenderText_Solid_Wrapped(font->get(), text.c_str(), color, wrap_length);
     if (surface == nullptr) {
         throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
@@ -261,7 +269,67 @@ WTTFSurface::WTTFSurface(WTTFFont* font, std::string &text, SDL_Color color, int
     this->surface = surface;
 }
 
-WTTFSurface::~WTTFSurface() {
+WTTFSurfaceSolid::~WTTFSurfaceSolid() {
+    if (surface != nullptr) {
+        SDL_FreeSurface(surface);
+    }
+}
+
+WTTFSurfaceShaded::WTTFSurfaceShaded(WTTFFont* font, std::string &&text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Shaded(font->get(), text.c_str(), color, {255, 255, 255, 255});
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurfaceShaded::WTTFSurfaceShaded(WTTFFont* font, std::string &text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Shaded(font->get(), text.c_str(), color, {255, 255, 255, 255});
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurfaceShaded::WTTFSurfaceShaded(WTTFFont* font, std::string &text, SDL_Color color, int wrap_length) {
+    SDL_Surface *surface = TTF_RenderText_Shaded_Wrapped(font->get(), text.c_str(), color, {255, 255, 255, 255},wrap_length);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurfaceShaded::~WTTFSurfaceShaded() {
+    if (surface != nullptr) {
+        SDL_FreeSurface(surface);
+    }
+}
+
+WTTFSurfaceBlended::WTTFSurfaceBlended(WTTFFont* font, std::string &&text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Blended(font->get(), text.c_str(), color);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurfaceBlended::WTTFSurfaceBlended(WTTFFont* font, std::string &text, SDL_Color color) {
+    SDL_Surface *surface = TTF_RenderText_Blended(font->get(), text.c_str(), color);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurfaceBlended::WTTFSurfaceBlended(WTTFFont* font, std::string &text, SDL_Color color, int wrap_length) {
+    SDL_Surface *surface = TTF_RenderText_Blended_Wrapped(font->get(), text.c_str(), color, wrap_length);
+    if (surface == nullptr) {
+        throw std::runtime_error("failed to create ttf surface" + std::string(TTF_GetError()));
+    } 
+    this->surface = surface;
+}
+
+WTTFSurfaceBlended::~WTTFSurfaceBlended() {
     if (surface != nullptr) {
         SDL_FreeSurface(surface);
     }

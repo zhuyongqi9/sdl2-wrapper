@@ -1,7 +1,4 @@
-#include "audio_recorder.h"
-#include "SDL_utils/SDL_wrapper.h"
-#include <SDL2/SDL_audio.h>
-#include <SDL2/SDL_stdinc.h>
+#include <SDL_wrapper/wrapper.h>
 #include <exception>
 #include <iostream>
 #include <stdexcept>
@@ -9,7 +6,6 @@
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR);
 
-const int SCALE = 1;
 const int SCREEN_WIDTH = 800 * SCALE;
 const int SCREEN_HEIGHT = 600 * SCALE;
 
@@ -21,6 +17,29 @@ uint8_t *recording_buffer = nullptr;
 uint32_t buffer_byte_size = 0;
 uint32_t buffer_byte_pos = 0;
 uint32_t buffer_max_pos = 0;
+
+class Recorder {
+public: 
+    Recorder() {
+        int cnt = SDL_GetNumAudioDevices(SDL_TRUE);
+        recording_devices.resize(cnt);
+        for (int i = 0; i < cnt; i++) {
+            recording_devices[i] = SDL_GetAudioDeviceName(i, SDL_TRUE);
+        }
+    }
+    
+    std::vector<std::string> recording_devices;
+private:
+};
+
+class Player {
+    public: 
+        Player() {
+            
+        }
+    private:
+        std::vector<std::string> playing_devices;
+};
 
 void audio_recording_callback(void *userdata, uint8_t *stream, int len) {
     std::memcpy(&recording_buffer[buffer_byte_pos], stream, len);
@@ -34,10 +53,27 @@ void audio_playback_callback(void *userdata, uint8_t *stream, int len) {
 
 int main(int argc, char **argv) {
     try {
-        SDL_Initializer sdl_initializer(SDL_INIT_AUDIO | SDL_INIT_VIDEO);
-        TTF_Initializer ttf_initializer;
-        WWindow window("Audio Recorder", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
+        SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
+        Mix_Initializer mix_initializer;
+        
+        std::unique_ptr<WWindow> window(new WWindow("Audio Recorder & Player", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+        std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED));
+        
+        WTTFFont font(PRO_DIR + "/audio_recorder/OpenSans-Regular.ttf", 48);
+        
+        
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+    }
+}
+
+/** int main(int argc, char **argv) {
+    try {
+        SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
+        Mix_Initializer mix_initializer;
+        
+        std::unique_ptr<WWindow> window(new WWindow("Audio Recorder & Player", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+        std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED));
         
         WTTFFont font(PRO_DIR + "/audio_recorder/OpenSans-Regular.ttf", 48);
         
@@ -176,3 +212,4 @@ int main(int argc, char **argv) {
         std::cout << e.what() << std::endl;
     }
 }
+*/
