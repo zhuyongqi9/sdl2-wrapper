@@ -1,10 +1,9 @@
-#include "SDL2/SDL_events.h"
-#include "SDL2/SDL_mouse.h"
 #include <SDL_wrapper/wrapper.h>
 #include <iostream>
+#include <vector>
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 800 * SCALE;
+const int SCREEN_HEIGHT = 600 * SCALE;
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR);
 
@@ -12,17 +11,17 @@ class SelectedList {
 public:
     SelectedList(WRenderer *renderer, std::vector<std::string> items, SDL_Point dst):renderer(renderer), items(items), dst(dst) {
         default_item = "None";
-        font_default.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 20));
-        default_width = 214;
-        default_height = 32;
+        font_default.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 20 * SCALE));
+        default_width = 214 * SCALE;
+        default_height = 32 * SCALE;
         color_border_item_default = {37,84,149,255};
         
         font_color = {0, 0, 0, 255};
         icon.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/widgets/selected_list/test.png")));
         
-        item_font.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 17));
-        item_width = 214 + icon->width;
-        item_height = 28;
+        item_font.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 17 * SCALE));
+        item_width = (214 + icon->width) * SCALE;
+        item_height = 28 * SCALE;
         color_bg_item_selected = {234,242,250, 255};
         cnt_item_shown = 5;
         index_item_selected = -1;
@@ -36,7 +35,7 @@ public:
             y += item_height;
         }
         y += item_height;
-        widget_width = default_width + icon->width;
+        widget_width = item_width;
         widget_height = item_height * cnt_item_shown;
     }
     
@@ -78,7 +77,7 @@ public:
     
     void render() {
         // draw default item
-        int level_width = 5;
+        int level_width = 5 * SCALE;
         std::unique_ptr<WTexture> texture_default_item(renderer->create_texture(WTTFSurfaceBlended(font_default.get(), default_item, font_color))); 
         SDL_Rect rect_default_item_text = {dst.x + level_width, dst.y, texture_default_item->width, texture_default_item->height};
         texture_default_item->render(nullptr, &rect_default_item_text);
@@ -86,7 +85,8 @@ public:
         SDL_Rect default_item_border = {dst.x, dst.y, default_width, default_height};
         renderer->draw_rect(&default_item_border, color_border_item_default);
         
-        this->rect_icon = {dst.x + default_width, dst.y, icon->width, icon->height};
+        //draw arrow icon
+        this->rect_icon = {dst.x + default_width, dst.y, icon->width * SCALE, icon->height * SCALE};
         icon->render(nullptr, &rect_icon);
         
         // render items

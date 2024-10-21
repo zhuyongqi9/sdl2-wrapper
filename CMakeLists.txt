@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 11)
 if (APPLE)
     add_compile_definitions(SCALE=1) 
 else()
-    add_compile_definitions(SCALE=1) 
+    add_compile_definitions(SCALE=2) 
 endif()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)    
@@ -81,3 +81,4 @@ add_executable(timer_test test/timer_test.cpp)
 # self-made widgets
 add_executable(toggle_list widgets/toggle_list/toggle_list.cpp)
 add_executable(selected_list widgets/selected_list/selected_list.cpp)
+add_executable(recording_button widgets/recording_button/recording_button.cpp)
