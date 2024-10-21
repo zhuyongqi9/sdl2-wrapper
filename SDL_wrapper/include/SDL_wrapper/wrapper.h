@@ -60,6 +60,7 @@ public:
     void clear();
     void present();
     void draw_rect(SDL_Rect *rect);
+    void draw_rect(SDL_Rect *rect, SDL_Color color);
     void fill_rect(SDL_Rect *rect);
     void draw_line(SDL_Point *start, SDL_Point *end);
     void draw_line(SDL_Point &&start, SDL_Point &&end);

@@ -83,6 +83,14 @@ void WRenderer::draw_rect(SDL_Rect *rect) {
     SDL_RenderDrawRect(renderer, rect);
 }
 
+void WRenderer::draw_rect(SDL_Rect *rect, SDL_Color color) {
+    uint8_t ori_r, ori_g, ori_b, ori_a;
+    SDL_GetRenderDrawColor(renderer, &ori_r, &ori_g, &ori_b, &ori_a);
+    this->set_color(color.r, color.g, color.b, color.a);
+    draw_rect(rect);
+    this->set_color(ori_r, ori_g, ori_b, ori_a);
+}
+
 void WRenderer::draw_line(SDL_Point *start, SDL_Point *end) {
     SDL_RenderDrawLine(renderer, start->x, start->y, end->x, end->y);
 }
