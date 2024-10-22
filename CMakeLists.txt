@@ -78,12 +78,12 @@ add_executable(render_to_texture render_to_texture/render_to_texture.cpp)
 add_executable(frame_independent_movement frame_independent_movement/frame_independent_movement.cpp)
 
 add_executable(recorder recorder/recorder.cpp)
-target_link_libraries(recorder PRIVATE SDL2 SDL2_image SDL2_ttf SDL2_mixer)
+
+add_executable(grid grid/grid.cpp)
 
 add_executable(timer_test test/timer_test.cpp)
 
 # self-made widgets
-
 include_directories(${PROJECT_SOURCE_DIR}/widgets/include)    
 add_executable(toggle_list widgets/toggle_list/toggle_list.cpp)
 add_executable(selected_list widgets/selected_list/selected_list.cpp)
