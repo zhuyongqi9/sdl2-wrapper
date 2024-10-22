@@ -59,6 +59,7 @@ add_executable(handle_input_and_clipboard handle_input_and_clipboard/handle_inpu
 add_executable(sound_effects_and_music sound_effects_and_music/sound_effects_and_music.cpp)
 
 add_executable(audio_recorder audio_recorder/audio_recorder.cpp)
+target_include_directories(audio_recorder PRIVATE widgets/include)
 
 add_executable(window_event window_event/window_event.cpp)
 
@@ -79,6 +80,8 @@ add_executable(frame_independent_movement frame_independent_movement/frame_indep
 add_executable(timer_test test/timer_test.cpp)
 
 # self-made widgets
+
+include_directories(${PROJECT_SOURCE_DIR}/widgets/include)    
 add_executable(toggle_list widgets/toggle_list/toggle_list.cpp)
 add_executable(selected_list widgets/selected_list/selected_list.cpp)
 add_executable(recording_button widgets/recording_button/recording_button.cpp)
