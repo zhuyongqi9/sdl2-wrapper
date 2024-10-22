@@ -1,26 +1,21 @@
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_log.h>
-#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <stdexcept>
-#include "SDL_utils/SDL_wrapper.h"
+#include <SDL_wrapper/wrapper.h>
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR);
-const int SCALE = 2;
+
 const int SCREEN_WIDTH = 800 * SCALE;
 const int SCREEN_HEIGHT = 600 * SCALE;
 
 int main(int argc, char **argv) {
     try {
-        SDL_Initializer initializer(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-        IMG_Initializer img_initializer(IMG_INIT_PNG);
+        SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
         Mix_Initializer mix_initializer;
         
-        WWindow window("Mouse Event", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        std::unique_ptr<WWindow> window(new WWindow("Sound Effects & Music", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+        std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED));
         
-        WPNGSurface surface(PRO_DIR + "/sound_effects_and_music/prompt.png"); 
-        WTexture texture_default(renderer.get(), surface.get());
+        std::shared_ptr<WTexture> picture(renderer->create_texture(WPNGSurface(PRO_DIR + "/sound_effects_and_music/prompt.png")));
 
         WMUS music(PRO_DIR+ "/sound_effects_and_music/beat.wav");
         WWAV scratch(PRO_DIR+ "/sound_effects_and_music/scratch.wav");
@@ -37,20 +32,20 @@ int main(int argc, char **argv) {
                 } else if (e.type == SDL_KEYDOWN) {
                     switch (e.key.keysym.sym) {
                         case SDLK_1:
-                            Mix_PlayChannel(-1, high.get(), 0);
+                            high.play_channel(-1, 0);
                             break;
                         case SDLK_2:
-                            Mix_PlayChannel(-1, medium.get(), 0);
+                            low.play_channel(-1, 0);
                             break;
                         case SDLK_3:
-                            Mix_PlayChannel(-1, low.get(), 0);
+                            medium.play_channel(-1, 0);
                             break;
                         case SDLK_4:
-                            Mix_PlayChannel(-1, scratch.get(), 0);
+                            scratch.play_channel(-1, 0);
                             break;
                         case SDLK_9:
                             if (Mix_PlayingMusic() == 0) {
-                                Mix_PlayMusic(music.get(), -1);
+                                music.play(-1);
                             } else {
                                 if (Mix_PausedMusic() == 1) {
                                     Mix_ResumeMusic();
@@ -67,11 +62,10 @@ int main(int argc, char **argv) {
             }
             
             
-            SDL_SetRenderDrawColor(renderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
-            SDL_RenderClear(renderer.get());
-            
-            SDL_RenderCopy(renderer.get(), texture_default.get(), NULL, NULL);
-            SDL_RenderPresent(renderer.get());
+            renderer->set_color(0xFF, 0xFF, 0xFF, 0xFF);
+            renderer->clear();
+            picture->render(nullptr, nullptr);
+            renderer->present();
         } 
 
     } catch (const std::exception &e) {
