@@ -190,14 +190,15 @@ public:
     WTTFFont(const WTTFFont&) = delete;
     WTTFFont& operator=(const WTTFFont&) = delete;
 
-    WTTFFont(std::string path);
-    WTTFFont(std::string path, int size);
+    WTTFFont(std::string path, uint size);
     ~WTTFFont();
+    
+    void set_size(uint size);
 
     TTF_Font* get() { return font; } 
 private:
     TTF_Font *font;
-    int size;
+    uint size;
 };
 
 class WTTFSurfaceSolid: public WSurface {
