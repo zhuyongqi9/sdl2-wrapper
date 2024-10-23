@@ -4,6 +4,7 @@
 #include "SDL2/SDL_pixels.h"
 #include "SDL2/SDL_rect.h"
 #include "SDL2/SDL_render.h"
+#include "SDL2/SDL_ttf.h"
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -231,13 +232,17 @@ TTF_Initializer::~TTF_Initializer() {
     TTF_Quit();
 }
 
-WTTFFont::WTTFFont(std::string path, int size) {
+WTTFFont::WTTFFont(std::string path, uint size) {
     TTF_Font *font = TTF_OpenFont(path.c_str(), size);
     if (font == nullptr) {
         throw std::runtime_error("failed to open ttf font " + std::string(TTF_GetError()));
     }
     this->font = font;
 }
+
+void WTTFFont::set_size(uint size) {
+    TTF_SetFontSize(font, size);
+};
 
 WTTFFont::~WTTFFont() {
     if (font != nullptr) {
