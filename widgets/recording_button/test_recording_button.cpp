@@ -11,15 +11,6 @@ static const std::string PRO_DIR(MACRO_PROJECT_DIR);
 const int SCREEN_WIDTH = 800 * SCALE;
 const int SCREEN_HEIGHT = 600 * SCALE;
 
-void start_recording() {
-    std::cout << "call back start recording" << std::endl;
-};
-
-void stop_recording() {
-    std::cout << "call back stop recording" << std::endl;
-};
-
-
 int main() {
     
     SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
@@ -33,8 +24,6 @@ int main() {
     std::vector<std::string> list_items(0); 
     for (int i = 0; i < 10; i++) list_items.push_back("device " + std::to_string(i));
     RecordingButton button(renderer.get(), {20, 20});
-    button.set_start_recording_callback(start_recording);
-    button.set_stop_recording_callback(stop_recording);
     
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {

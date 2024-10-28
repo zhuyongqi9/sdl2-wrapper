@@ -1,13 +1,5 @@
 #include <iostream>
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_events.h"
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_keycode.h"
-#include "SDL2/SDL_pixels.h"
-#include "SDL2/SDL_rect.h"
-#include "SDL2/SDL_render.h"
-#include "SDL2/SDL_surface.h"
-#include "SDL_utils/SDL_wrapper.h"
+#include <SDL_wrapper/wrapper.h>
 #include <stdexcept>
 #include <vector>
 #include <fstream>
@@ -29,7 +21,7 @@ const int TOTAL_TILE_SPRITES = 12;
 WRenderer *renderer;
 WTexture *tile_texture;
 
-bool checkCollision(SDL_Rect &camera, SDL_Rect &box) {
+bool in_camera(SDL_Rect &camera, SDL_Rect &box) {
     return ( (box.x >= camera.x) && (box.x < camera.x + camera.w))
     && ((box.y >= camera.y) && (box.y < camera.y + camera.h));
 }
@@ -64,6 +56,9 @@ const static std::vector<SDL_Rect> tile_clips = {
     {80, 0, TILE_WIDTH, TILE_HEIGHT},
 };
 
+class Tile;
+Tile* tiles[TOTAL_TILES];
+
 class Tile {
 public:
     Tile(int x, int y, int tile_type): type(tile_type) 
@@ -75,7 +70,7 @@ public:
     }
     
     void render(SDL_Rect camera) {
-        if (checkCollision(camera, box)) {
+        if (in_camera(camera, box)) {
             SDL_Rect dst = { box.x - camera.x, box.y - camera.y, TILE_WIDTH, TILE_HEIGHT };
             SDL_RenderCopy(renderer->get(), tile_texture->get(), &tile_clips[type], &dst);
         }
@@ -92,7 +87,7 @@ bool touches_wall(SDL_Rect box, Tile* tiles[]) {
     for (int i = 0; i < TOTAL_TILES; i++) {
         if ((tiles[i]->get_type() >= TILE_CENTER) && (tiles[i]->get_type() <= TILE_TOPLEFT)) {
             SDL_Rect tile_box = tiles[i]->get_box();
-            if (checkCollision(tile_box, box)) {
+            if (in_camera(tile_box, box)) {
                 return true;
             }
         }
@@ -106,41 +101,41 @@ public:
     static const int DOT_HEIGHT = 20;
     static const int DOT_VEL = 10;
     
-    Dot(): vel_x(DOT_VEL), vel_y(DOT_VEL)
+    Dot(WRenderer *renderer): renderer(renderer), vel_x(DOT_VEL), vel_y(DOT_VEL)
     {
         WPNGSurface surface(PRO_DIR + "/tilling/dot.bmp");
-        SDL_SetColorKey(surface.get(), SDL_TRUE,SDL_MapRGB(surface.get()->format, 0, 255, 255));
-        texture = new WTexture(renderer->get(), surface.get());
+        surface.set_color_key(0, 255, 255);
+        texture.reset(renderer->create_texture(&surface));
         box = {0, 0, texture->width, texture->height};
     }
     
     void render(SDL_Rect &camera) {
         SDL_Rect dst = { box.x - camera.x, box.y - camera.y, texture->width, texture->height};
-        SDL_RenderCopy(renderer->get(), texture->get(), NULL, &dst);
+        texture->render(nullptr, &dst);
     }
     
-    void moveLeft(Tile *tiles[]) {
+    void moveLeft() {
         box.x -= vel_x;
         if (box.x < 0 || touches_wall(box, tiles)) {
             box.x += vel_x;
         }
     }
     
-    void moveRight(Tile *tiles[]) {
+    void moveRight() {
         box.x += vel_x;
         if (((box.x + DOT_WIDTH) > LEVEL_WIDHT) || touches_wall(box, tiles)) {
             box.x -= vel_x;
         }
     }
     
-    void moveUp(Tile *tiles[]) {
+    void moveUp() {
         box.y -= vel_y;
         if (box.y < 0 || touches_wall(box, tiles)) {
             box.y += vel_y;
         }
     }
     
-    void moveDown(Tile *tiles[]) {
+    void moveDown() {
         box.y += vel_y;
         if (((box.y + DOT_HEIGHT) > LEVEL_HEIGHT) || touches_wall(box, tiles)) {
             box.y -= vel_y;
@@ -168,13 +163,33 @@ public:
         camera.w = SCREEN_WIDTH;
         camera.h = SCREEN_HEIGHT;
     }
+    
+    void handle_event(SDL_Event &e) {
+        if (e.type == SDL_KEYDOWN) {
+            switch (e.key.keysym.sym) {
+                case SDLK_DOWN:
+                    moveDown();
+                break;
+                case SDLK_UP:
+                    moveUp();
+                break;
+                case SDLK_LEFT:
+                    moveLeft();
+                break;
+                case SDLK_RIGHT:
+                    moveRight();
+                break;
+            }
+        }
+    }
+    
 private:
-    WTexture *texture;
+    WRenderer *renderer;
+    std::unique_ptr<WTexture> texture;
     SDL_Rect box;
     int vel_x, vel_y;
 };
 
-Tile* tiles[TOTAL_TILES];
 void load_map() {
     std::ifstream map(PRO_DIR + "/tilling/lazy.map");
     if (map.fail()) {
@@ -207,39 +222,25 @@ void load_map() {
 int main(int argc, char **argv) {
     try {
         SDL_Initializer sdl_initializer(SDL_INIT_VIDEO);
-        IMG_Initializer img_initialzer(IMG_INIT_PNG);
-        
-        WWindow window("Tilling", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        renderer = new WRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
+        IMG_Initializer img_intializer(IMG_INIT_PNG);
+        std::unique_ptr<WWindow> window(new WWindow("Tilling", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE |SDL_WINDOW_SHOWN));
+        std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED));
         
         WPNGSurface surface_tile(PRO_DIR + "/tilling/tiles.png");
-        tile_texture = new WTexture(renderer->get(), surface_tile.get());
+        tile_texture = renderer->create_texture(&surface_tile);
         
         load_map();
         
         SDL_Event e;
         bool quit = false;
-        Dot dot;
+        Dot dot(renderer.get());
+        
         while (!quit) {
             while (SDL_PollEvent(&e) != 0) {
                 if (e.type == SDL_QUIT) {
                     quit = true;
-                } else if (e.type == SDL_KEYDOWN) {
-                    switch (e.key.keysym.sym) {
-                        case SDLK_DOWN:
-                            dot.moveDown(tiles);
-                            break;
-                        case SDLK_UP:
-                            dot.moveUp(tiles);
-                            break;
-                        case SDLK_LEFT:
-                            dot.moveLeft(tiles);
-                            break;
-                        case SDLK_RIGHT:
-                            dot.moveRight(tiles);
-                            break;
-                    }
-                }
+                } 
+                dot.handle_event(e);
             }
             
             SDL_Rect camera;

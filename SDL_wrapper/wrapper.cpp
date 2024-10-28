@@ -16,16 +16,16 @@ SDL_Initializer::~SDL_Initializer() {
     SDL_Quit();
 }
 
-WWindow::WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
-    SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+WWindow::WWindow(std::string title, int WINDOW_WIDTH, int WINDOW_HEIGHT, uint32_t flags): window_width(WINDOW_WIDTH), window_height(WINDOW_HEIGHT) {
+    SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, flags);
     if (window == nullptr) {
         throw std::runtime_error("failed to create window error:" + std::string(SDL_GetError()));
     }
     this->window = window;
 }
 
-WWindow::WWindow(std::string title, int x, int y,int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
-    SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+WWindow::WWindow(std::string title, int x, int y,int WINDOW_WIDTH, int WINDOW_HEIGHT, uint32_t flags): window_width(WINDOW_WIDTH), window_height(WINDOW_HEIGHT) {
+    SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, WINDOW_WIDTH, WINDOW_HEIGHT, flags);
     if (window == nullptr) {
         throw std::runtime_error("failed to create window error:" + std::string(SDL_GetError()));
     }
@@ -39,7 +39,17 @@ WWindow::~WWindow() {
 }
 
 WRenderer* WWindow::create_renderer(int index, uint32_t flags) {
-    return new WRenderer(this, index, flags);
+    WRenderer *renderer = new WRenderer(this, index, flags);
+    int rw, rh;
+    SDL_GetRendererOutputSize(renderer->get(), &rw, &rh);
+    
+    //support retina display
+    if (rw != window_width) {
+        double width_scale = (double)rw / window_width;
+        double height_scael = (double)rh / window_height;
+        SDL_RenderSetScale(renderer->get(), width_scale, height_scael);
+    }
+    return renderer;
 }
 
 WRenderer::WRenderer(WWindow * window, int index, uint32_t flags) {
@@ -232,6 +242,7 @@ TTF_Initializer::~TTF_Initializer() {
     TTF_Quit();
 }
 
+#include <iostream>
 WTTFFont::WTTFFont(std::string path, uint size) {
     TTF_Font *font = TTF_OpenFont(path.c_str(), size);
     if (font == nullptr) {

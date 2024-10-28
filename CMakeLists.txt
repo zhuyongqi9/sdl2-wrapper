@@ -16,9 +16,14 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR}/include)    
 link_libraries(SDL_wrapper)
 
+include_directories(${PROJECT_SOURCE_DIR}/widgets/include)    
+
 add_executable(basic_window basic_window.cpp)
 
 add_executable(handle_key_event handle_key_event/handle_key_event.cpp)
+add_executable(handle_mouse_event handle_mouse_event/handle_mouse_event.cpp)
+add_executable(handle_input_and_clipboard handle_input_and_clipboard/handle_input_and_clipboard.cpp)
+add_executable(handle_user_defined_event handle_user_defined_event/handle_user_defined_event.cpp)
 
 add_executable(stretch stretch/stretch.cpp)
 
@@ -44,7 +49,6 @@ add_executable(texture_rotation texture_rotation/texture_rotation.cpp)
 
 add_executable(ttf ttf/ttf.cpp)
 
-add_executable(handle_mouse_event handle_mouse_event/handle_mouse_event.cpp)
 
 add_executable(frame_rate frame_rate/frame_rate.cpp)
 
@@ -54,7 +58,6 @@ add_executable(background_scrolling background_scrolling/background_scrolling.cp
 
 add_executable(background_infinite background_infinite/background_infinite.cpp)
 
-add_executable(handle_input_and_clipboard handle_input_and_clipboard/handle_input_and_clipboard.cpp)
 
 add_executable(sound_effects_and_music sound_effects_and_music/sound_effects_and_music.cpp)
 
@@ -63,9 +66,7 @@ target_include_directories(audio_recorder PRIVATE widgets/include)
 
 add_executable(window_event window_event/window_event.cpp)
 
-add_executable(multiple_window multiple_window/multiple_window.cpp)
-
-add_executable(text_manipulation text_manipulation/text_manipulation.cpp)
+add_executable(texture_manipulation texture_manipulation/texture_manipulation.cpp)
 
 add_executable(particle_engine particle_engine/particle_engine.cpp)
 
@@ -81,7 +82,6 @@ add_executable(timer_test test/timer_test.cpp)
 
 # self-made widgets
 
-include_directories(${PROJECT_SOURCE_DIR}/widgets/include)    
 add_executable(toggle_list widgets/toggle_list/toggle_list.cpp)
 add_executable(selected_list widgets/selected_list/selected_list.cpp)
 add_executable(recording_button widgets/recording_button/recording_button.cpp)
