@@ -90,8 +90,8 @@ public:
     WTexture(WRenderer *, WSurface &&);
     ~WTexture();
 
-    void render(SDL_Rect *src, SDL_Rect *dst);
-    void renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip);
+    void render(const SDL_Rect *src, const SDL_Rect *dst);
+    void renderEx(const SDL_Rect *src, const SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip);
     void set_color_mod(int8_t r, int8_t g, int8_t b);
     void set_alpha_mod(uint8_t alpha);
     
