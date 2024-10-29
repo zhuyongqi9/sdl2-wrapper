@@ -57,6 +57,7 @@ public:
     ~WRenderer();
     
     void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    void set_target(WTexture *);
     void clear();
     void present();
     void draw_rect(SDL_Rect *rect);
@@ -86,8 +87,9 @@ public:
     WTexture(const WTexture&) = delete;
     WTexture& operator=(const WTexture&) = delete;
 
-    WTexture(WRenderer *, WSurface *);
-    WTexture(WRenderer *, WSurface &&);
+    explicit WTexture(WRenderer *renderer, SDL_Texture *texture): renderer(renderer), texture(texture){}
+    explicit WTexture(WRenderer *, WSurface *);
+    explicit WTexture(WRenderer *, WSurface &&);
     ~WTexture();
 
     void render(const SDL_Rect *src, const SDL_Rect *dst);
@@ -103,7 +105,18 @@ private:
 
 class WSurface {
 public:
-    virtual SDL_Surface* get() { return nullptr; }
+    virtual ~WSurface(){
+        if (surface != nullptr) {
+            SDL_FreeSurface(surface);
+        }
+    } 
+    
+    explicit WSurface():surface(nullptr) {}
+    explicit WSurface(SDL_Surface *surface): surface(surface){}
+    
+    virtual SDL_Surface* get() { return surface; }
+private:
+    SDL_Surface *surface;
 };
 
 class WBMPSurface: public WSurface {
