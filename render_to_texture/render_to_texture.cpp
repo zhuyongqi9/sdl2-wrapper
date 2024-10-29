@@ -1,9 +1,7 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
-#include "SDL2/SDL_pixels.h"
-#include "SDL2/SDL_render.h"
-#include "SDL_Utils/SDL_wrapper.h"
+#include <SDL_wrapper/wrapper.h>
 #include "utils.h"
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR);
@@ -14,13 +12,14 @@ const int SCREEN_HEIGHT = 480 ;
 const int TICKS_PER_FRAME = 1000 / 60;
 
 int main() {
-    SDL_Initializer sdl_initializer(SDL_INIT_VIDEO);
+    SDL_Initializer sdl_initializer(SDL_INIT_AUDIO);
     IMG_Initializer img_initializer(IMG_INIT_PNG);
     
-    WWindow window("bitmap fonts", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
+    std::unique_ptr<WWindow> window(new WWindow("Render To Texture", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN));
+    std::unique_ptr<WRenderer> renderer(window->create_renderer(-1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC));
     
-    SDL_Texture *texture = SDL_CreateTexture(renderer.get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_Texture *sdl_texture = SDL_CreateTexture(renderer->get(), SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+    WTexture texture(renderer.get(), sdl_texture);
     
     Timer timer;
     timer.start();
@@ -36,31 +35,27 @@ int main() {
         }
         
         uint64_t start = timer.get_ticks();
-        SDL_SetRenderTarget(renderer.get(), texture);
-        SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
-        SDL_RenderClear(renderer.get());
+        renderer->set_target(&texture);
+        renderer->set_color(0, 0, 0, 255);
+        renderer->clear();
         
-        SDL_SetRenderDrawColor(renderer.get(), 255, 0, 0, 255);
         SDL_Rect fill_rect = { SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
-        SDL_RenderFillRect(renderer.get(), &fill_rect);
+        renderer->fill_rect(&fill_rect, {255, 0, 0, 255});
         
-        SDL_SetRenderDrawColor(renderer.get(), 0, 255, 0, 255);
         SDL_Rect line_rect = { SCREEN_WIDTH / 6, SCREEN_HEIGHT / 6, SCREEN_WIDTH * 2/ 3, SCREEN_HEIGHT * 2/ 3};
-        SDL_RenderDrawRect(renderer.get(), &line_rect);
+        renderer->draw_rect(&line_rect, {0, 255, 0, 255});
         
-        SDL_SetRenderDrawColor(renderer.get(), 0, 0, 255, 255);
-        SDL_RenderDrawLine(renderer.get(), 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+        renderer->set_color(0, 0, 255, 255);
+        renderer->draw_line({0, SCREEN_HEIGHT / 2}, {SCREEN_WIDTH, SCREEN_HEIGHT / 2});
         
-        
-        SDL_SetRenderTarget(renderer.get(), NULL);
-        SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
-        SDL_RenderClear(renderer.get());
+        renderer->set_target(nullptr);
+        renderer->set_color(0, 0, 0, 255);
+        renderer->clear();
         
         SDL_Rect src = {0,0, SCREEN_WIDTH,SCREEN_HEIGHT};
-//        SDL_Point point = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
         SDL_Point point = {SCREEN_WIDTH / 4, SCREEN_HEIGHT / 4};
-        SDL_RenderCopyEx(renderer.get(), texture, &src, &src, angle, &point, SDL_FLIP_NONE);
-        SDL_RenderPresent(renderer.get());
+        texture.renderEx(&src, &src, angle, &point, SDL_FLIP_NONE);
+        renderer->present();
         
         angle += 1;
         if (angle > 360 ) angle = 0;
