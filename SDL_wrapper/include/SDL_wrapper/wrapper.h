@@ -34,14 +34,14 @@ public:
     WWindow(const WWindow&) = delete;
     WWindow& operator=(const WWindow&) = delete;
 
-    WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
-    WWindow(std::string title, int x, int y, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
+    WWindow(std::string title, int WIDNOW_WITH, int WINDOW_HEIGHT, uint32_t window_flags);
+    WWindow(std::string title, int x, int y, int WIDNOW_WITH, int WINDOW_HEIGHT, uint32_t window_flags);
     ~WWindow();
     
     WRenderer* create_renderer(int index, uint32_t flags);
     
-    int SCREEN_WIDTH;
-    int SCREEN_HEIGHT;
+    int window_width;
+    int window_height;
     SDL_Window* get() {return window;}
 private:
     SDL_Window *window;
@@ -94,6 +94,8 @@ public:
     void renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip);
     void set_color_mod(int8_t r, int8_t g, int8_t b);
     void set_alpha_mod(uint8_t alpha);
+    
+    SDL_Texture* get() { return texture; }
 private:
     SDL_Texture* texture;
     WRenderer* renderer;
