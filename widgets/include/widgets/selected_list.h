@@ -1,5 +1,5 @@
-#ifndef WRAPPER_H
-#define WRAPPER_H
+#ifndef SDL_WRAPPER_H
+#define SDL_WRAPPER_H
 #include <SDL_wrapper/wrapper.h>
 #endif
 #include <iostream>
@@ -10,16 +10,16 @@ public:
     SelectedList(WRenderer *renderer, std::vector<std::string> items, SDL_Point dst):renderer(renderer), items(items), dst(dst), PRO_DIR(MACRO_PROJECT_DIR) {
         default_item = "None";
         font_default.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 20 * SCALE));
-        default_width = 214 * SCALE;
-        default_height = 32 * SCALE;
+        default_width = 240 * SCALE;
+        default_height = 40 * SCALE;
         color_border_item_default = {37,84,149,255};
         
         font_color = {0, 0, 0, 255};
-        icon.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/widgets/selected_list/test.png")));
+        icon.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/widgets/selected_list/black_arrow.png")));
         
-        item_font.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 17 * SCALE));
-        item_width = (214 + icon->width) * SCALE;
-        item_height = 28 * SCALE;
+        item_font.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 17 * 2 * SCALE));
+        item_width = (default_width + icon->width) * SCALE;
+        item_height = default_height * SCALE;
         color_bg_item_selected = {234,242,250, 255};
         cnt_item_shown = items.size();
         index_item_selected = -1;
@@ -37,6 +37,10 @@ public:
         widget_height = item_height * cnt_item_shown;
     }
     
+    typedef void (*selected_callback_func)(int index);
+    void set_selected_callback(selected_callback_func selected) {
+        this->selected_callbak = selected;
+    }
     
     void handle_event(SDL_Event &e) {
         SDL_Point point;
@@ -50,7 +54,8 @@ public:
                     SDL_GetMouseState(&point.x, &point.y);
                     for (int i = 0; i < cnt_item_shown; i++) {
                         if (in_region(point, arr_rect_item_shown[i])) {
-                            std::cout << "selected: " << i << std::endl;
+//                            std::cout << "selected: " << i << std::endl;
+                            selected_callbak(i);
                             index_item_selected = i;
                             expend = false;
                             default_item = items[i];
@@ -65,7 +70,7 @@ public:
                 for (int i = 0; i < cnt_item_shown; i++) {
                     if (in_region(point, arr_rect_item_shown[i])) {
                         index_item_selected = i;
-                        std::cout << "selected: " << i << std::endl;
+//                        std::cout << "Hover : " << i << std::endl;
                         break;
                     }
                 }
@@ -84,7 +89,7 @@ public:
         renderer->draw_rect(&default_item_border, color_border_item_default);
         
         //draw arrow icon
-        this->rect_icon = {dst.x + default_width, dst.y, icon->width * SCALE, icon->height * SCALE};
+        this->rect_icon = {dst.x + 212, dst.y + 12, 16 * SCALE, 16 * SCALE};
         icon->render(nullptr, &rect_icon);
         
         // render items
@@ -100,7 +105,7 @@ public:
                 }
                 std::unique_ptr<WTexture> item(renderer->create_texture(WTTFSurfaceBlended(item_font.get(), items[i], font_color))); 
                 int x = arr_rect_item_shown[i].x, y = arr_rect_item_shown[i].y;
-                SDL_Rect rect_item ={x + level_width + level_width, y, item->width, item->height}; 
+                SDL_Rect rect_item ={x + level_width + level_width, y, item->width / 2, item->height / 2}; 
                 item->render(nullptr, &rect_item);
                 //renderer->draw_rect(&arr_rect_item_shown[i], {0, 0, 0, 255});
             }
@@ -140,4 +145,6 @@ private:
         return (point.x >= region.x && point.x <= region.x + region.w)
         && (point.y >= region.y && point.y <= region.y + region.h);
     }
+    
+    selected_callback_func selected_callbak;
 };

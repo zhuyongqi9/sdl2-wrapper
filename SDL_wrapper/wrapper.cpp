@@ -4,6 +4,7 @@
 #include "SDL2/SDL_pixels.h"
 #include "SDL2/SDL_rect.h"
 #include "SDL2/SDL_render.h"
+#include "SDL2/SDL_ttf.h"
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -15,16 +16,16 @@ SDL_Initializer::~SDL_Initializer() {
     SDL_Quit();
 }
 
-WWindow::WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
-    SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+WWindow::WWindow(std::string title, int WINDOW_WIDTH, int WINDOW_HEIGHT, uint32_t flags): window_width(WINDOW_WIDTH), window_height(WINDOW_HEIGHT) {
+    SDL_Window* window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, flags);
     if (window == nullptr) {
         throw std::runtime_error("failed to create window error:" + std::string(SDL_GetError()));
     }
     this->window = window;
 }
 
-WWindow::WWindow(std::string title, int x, int y,int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t flags) {
-    SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, SCREEN_WIDTH, SCREEN_HEIGHT, flags);
+WWindow::WWindow(std::string title, int x, int y,int WINDOW_WIDTH, int WINDOW_HEIGHT, uint32_t flags): window_width(WINDOW_WIDTH), window_height(WINDOW_HEIGHT) {
+    SDL_Window *window = SDL_CreateWindow(title.c_str(), x, y, WINDOW_WIDTH, WINDOW_HEIGHT, flags);
     if (window == nullptr) {
         throw std::runtime_error("failed to create window error:" + std::string(SDL_GetError()));
     }
@@ -38,7 +39,17 @@ WWindow::~WWindow() {
 }
 
 WRenderer* WWindow::create_renderer(int index, uint32_t flags) {
-    return new WRenderer(this, index, flags);
+    WRenderer *renderer = new WRenderer(this, index, flags);
+    int rw, rh;
+    SDL_GetRendererOutputSize(renderer->get(), &rw, &rh);
+    
+    //support retina display
+    if (rw != window_width) {
+        double width_scale = (double)rw / window_width;
+        double height_scael = (double)rh / window_height;
+        SDL_RenderSetScale(renderer->get(), width_scale, height_scael);
+    }
+    return renderer;
 }
 
 WRenderer::WRenderer(WWindow * window, int index, uint32_t flags) {
@@ -65,6 +76,11 @@ WTexture* WRenderer::create_texture(WSurface &&surface) {
 
 void WRenderer::set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(renderer, r, g, b, a);
+}
+
+void WRenderer::set_target(WTexture *texture) {
+    SDL_Texture *ptr = texture == nullptr ? nullptr : texture->get();     
+    SDL_SetRenderTarget(renderer, ptr);
 }
 
 void WRenderer::clear() {
@@ -151,11 +167,11 @@ WTexture::~WTexture() {
     }
 }
 
-void WTexture::render(SDL_Rect *src, SDL_Rect *dst) {
+void WTexture::render(const SDL_Rect *src, const SDL_Rect *dst) {
     SDL_RenderCopy(renderer->get(), texture, src, dst);
 }
 
-void WTexture::renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip) {
+void WTexture::renderEx(const SDL_Rect *src, const SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip) {
     SDL_RenderCopyEx(renderer->get(), texture, src, dst, angle, point, flip);
 }
 
@@ -231,13 +247,18 @@ TTF_Initializer::~TTF_Initializer() {
     TTF_Quit();
 }
 
-WTTFFont::WTTFFont(std::string path, int size) {
+#include <iostream>
+WTTFFont::WTTFFont(std::string path, uint size) {
     TTF_Font *font = TTF_OpenFont(path.c_str(), size);
     if (font == nullptr) {
         throw std::runtime_error("failed to open ttf font " + std::string(TTF_GetError()));
     }
     this->font = font;
 }
+
+void WTTFFont::set_size(uint size) {
+    TTF_SetFontSize(font, size);
+};
 
 WTTFFont::~WTTFFont() {
     if (font != nullptr) {

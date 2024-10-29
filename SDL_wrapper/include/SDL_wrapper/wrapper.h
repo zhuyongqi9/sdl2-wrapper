@@ -34,14 +34,14 @@ public:
     WWindow(const WWindow&) = delete;
     WWindow& operator=(const WWindow&) = delete;
 
-    WWindow(std::string title, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
-    WWindow(std::string title, int x, int y, int SCREEN_WIDTH, int SCREEN_HEIGHT, uint32_t window_flags);
+    WWindow(std::string title, int WIDNOW_WITH, int WINDOW_HEIGHT, uint32_t window_flags);
+    WWindow(std::string title, int x, int y, int WIDNOW_WITH, int WINDOW_HEIGHT, uint32_t window_flags);
     ~WWindow();
     
     WRenderer* create_renderer(int index, uint32_t flags);
     
-    int SCREEN_WIDTH;
-    int SCREEN_HEIGHT;
+    int window_width;
+    int window_height;
     SDL_Window* get() {return window;}
 private:
     SDL_Window *window;
@@ -57,6 +57,7 @@ public:
     ~WRenderer();
     
     void set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+    void set_target(WTexture *);
     void clear();
     void present();
     void draw_rect(SDL_Rect *rect);
@@ -86,14 +87,17 @@ public:
     WTexture(const WTexture&) = delete;
     WTexture& operator=(const WTexture&) = delete;
 
-    WTexture(WRenderer *, WSurface *);
-    WTexture(WRenderer *, WSurface &&);
+    explicit WTexture(WRenderer *renderer, SDL_Texture *texture): renderer(renderer), texture(texture){}
+    explicit WTexture(WRenderer *, WSurface *);
+    explicit WTexture(WRenderer *, WSurface &&);
     ~WTexture();
 
-    void render(SDL_Rect *src, SDL_Rect *dst);
-    void renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip);
+    void render(const SDL_Rect *src, const SDL_Rect *dst);
+    void renderEx(const SDL_Rect *src, const SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip);
     void set_color_mod(int8_t r, int8_t g, int8_t b);
     void set_alpha_mod(uint8_t alpha);
+    
+    SDL_Texture* get() { return texture; }
 private:
     SDL_Texture* texture;
     WRenderer* renderer;
@@ -101,7 +105,18 @@ private:
 
 class WSurface {
 public:
-    virtual SDL_Surface* get() { return nullptr; }
+    virtual ~WSurface(){
+        if (surface != nullptr) {
+            SDL_FreeSurface(surface);
+        }
+    } 
+    
+    explicit WSurface():surface(nullptr) {}
+    explicit WSurface(SDL_Surface *surface): surface(surface){}
+    
+    virtual SDL_Surface* get() { return surface; }
+private:
+    SDL_Surface *surface;
 };
 
 class WBMPSurface: public WSurface {
@@ -190,14 +205,15 @@ public:
     WTTFFont(const WTTFFont&) = delete;
     WTTFFont& operator=(const WTTFFont&) = delete;
 
-    WTTFFont(std::string path);
-    WTTFFont(std::string path, int size);
+    WTTFFont(std::string path, uint size);
     ~WTTFFont();
+    
+    void set_size(uint size);
 
     TTF_Font* get() { return font; } 
 private:
     TTF_Font *font;
-    int size;
+    uint size;
 };
 
 class WTTFSurfaceSolid: public WSurface {

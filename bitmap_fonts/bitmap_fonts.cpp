@@ -1,21 +1,19 @@
 #include <cinttypes>
 #include <iostream>
-#include "SDL2/SDL_events.h"
-#include "SDL2/SDL_render.h"
-#include "SDL2/SDL_surface.h"
-#include "SDL2/SDL_video.h"
-#include "SDL_utils/SDL_wrapper.h"
+#include <SDL_wrapper/wrapper.h>
+#include <stdexcept>
 
 const std::string PRO_DIR(MACRO_PROJECT_DIR);
 
 const int SCREEN_WIDTH = 640 * 2;
 const int SCREEN_HEIGHT = 480 * 2;
 
-SDL_Surface *surface_pixel;
+WSurface *g_surface_pixel;
 
 uint32_t get_pixel(int x, int y) {
-    uint32_t *pixels = static_cast<uint32_t *>(surface_pixel->pixels);
-    return pixels[x + y * (static_cast<int32_t>(surface_pixel->pitch)/4)];
+    std::cout << g_surface_pixel->get()->pixels << std::endl;
+    uint32_t *pixels = static_cast<uint32_t *>(g_surface_pixel->get()->pixels);
+    return pixels[x + y * (static_cast<int32_t>(g_surface_pixel->get()->pitch)/4)];
 }
 
 int find_left_edge(int x, int y, int width, int height, uint32_t bg_color) {
@@ -67,14 +65,22 @@ int main(int argc, char **argv) {
         SDL_Initializer sdl_initializer(SDL_INIT_VIDEO);
         IMG_Initializer img_initializer(IMG_INIT_PNG);
         WWindow window("bitmap fonts", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-        WRenderer renderer(window.get(), -1, SDL_RENDERER_ACCELERATED);
+        std::unique_ptr<WRenderer> renderer(window.create_renderer(-1, SDL_RENDERER_ACCELERATED));
         
         WPNGSurface surface(PRO_DIR + "/bitmap_fonts/lazyfont.png");
-        surface_pixel = SDL_ConvertSurfaceFormat(surface.get(), SDL_GetWindowPixelFormat(window.get()), 0);
-//        SDL_SetColorKey(surface_pixel, SDL_TRUE, SDL_MapRGB(surface_pixel->format, 0, 255, 255));
         
-        uint32_t *pixels = static_cast<uint32_t *>(surface_pixel->pixels);
-        WTexture texture(renderer.get(), surface_pixel);
+        SDL_Surface *tmp = SDL_ConvertSurfaceFormat(surface.get(), SDL_GetWindowPixelFormat(window.get()), 0);
+        if (tmp == nullptr) throw std::runtime_error(std::string("Failed to convert surface to pixel format") + SDL_GetError());
+        
+        std::cout << tmp->pixels << std::endl;
+        WSurface surface_pixel(tmp);
+        std::cout << surface_pixel.get()->pixels << std::endl;
+        g_surface_pixel = &surface_pixel;
+        std::cout << g_surface_pixel->get()->pixels << std::endl;
+//        SDL_SetColorKey(surface_pixel->get(), SDL_TRUE, SDL_MapRGB(surface_pixel->get()->format, 0, 255, 255));
+        
+        WTexture texture(renderer.get(), &surface_pixel);
+        std::cout << g_surface_pixel->get()->pixels << std::endl;
         
         int cell_width = texture.width / 16;
         int cell_height = texture.height / 16;
@@ -96,12 +102,12 @@ int main(int argc, char **argv) {
                 }
             }
             
-            SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
-            SDL_RenderClear(renderer.get());
+            renderer->set_color(255, 255, 255, 255);
+            renderer->clear();
             SDL_Rect src = {left_edge, top_edge, right_edge - left_edge, bottom_edge - top_edge};
             SDL_Rect dst = {20, 20, right_edge - left_edge, bottom_edge - top_edge};
-            SDL_RenderCopy(renderer.get(), texture.get(), &src, &dst);
-            SDL_RenderPresent(renderer.get());
+            texture.render(&src, &dst);
+            renderer->present();
         }
         
     } catch (const std::exception &e) {
