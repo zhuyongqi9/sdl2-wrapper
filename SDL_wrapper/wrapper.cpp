@@ -162,11 +162,11 @@ WTexture::~WTexture() {
     }
 }
 
-void WTexture::render(SDL_Rect *src, SDL_Rect *dst) {
+void WTexture::render(const SDL_Rect *src, const SDL_Rect *dst) {
     SDL_RenderCopy(renderer->get(), texture, src, dst);
 }
 
-void WTexture::renderEx(SDL_Rect *src, SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip) {
+void WTexture::renderEx(const SDL_Rect *src, const SDL_Rect *dst, double angle, SDL_Point *point, SDL_RendererFlip flip) {
     SDL_RenderCopyEx(renderer->get(), texture, src, dst, angle, point, flip);
 }
 
