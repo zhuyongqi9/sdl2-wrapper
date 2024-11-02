@@ -5,7 +5,7 @@ add_compile_definitions(MACRO_PROJECT_DIR="${PROJECT_SOURCE_DIR}")
 
 add_subdirectory(SDL_wrapper)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 if (APPLE)
     add_compile_definitions(SCALE=1) 
@@ -83,6 +83,8 @@ add_executable(recorder recorder/recorder.cpp)
 add_executable(grid grid/grid.cpp)
 
 add_executable(timer_test test/timer_test.cpp)
+
+add_executable(file_list file_list/file_list.cpp)
 
 # self-made widgets
 
