@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
+
 project(SDL2_snippets)
 
 add_compile_definitions(MACRO_PROJECT_DIR="${PROJECT_SOURCE_DIR}")
