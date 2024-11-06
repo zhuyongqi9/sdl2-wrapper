@@ -13,7 +13,7 @@ class InfiniteScrollingBackground {
 public: 
     InfiniteScrollingBackground(WRenderer *renderer): renderer(renderer)
     {
-        picture.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/background_infinite/bg.png")));
+        picture  = renderer->create_texture(WPNGSurface(PRO_DIR + "/background_infinite/bg.png"));
         x = y = 0;
         speed = SPEED;
         offset = 0;
@@ -65,7 +65,7 @@ public:
     Dot(WRenderer *renderer, double ratio):renderer(renderer) {
         WBMPSurface surface(PRO_DIR + "/background_infinite/dot.bmp");
         SDL_SetColorKey(surface.get(), SDL_TRUE, SDL_MapRGB(surface.get()->format, 255, 255, 255));
-        dot.reset(renderer->create_texture(&surface));
+        dot  = renderer->create_texture(&surface);
         radius  = dot->width / 2;
         radius = (int) radius * ratio;
         x = radius;

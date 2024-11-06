@@ -83,7 +83,7 @@ public:
         
         WBMPSurface surface_dot(PRO_DIR + "/particle_engine/dot.bmp");
         surface_dot.set_color_key( 0, 255, 255);
-        dot.reset(renderer->create_texture(&surface_dot));
+        dot  = renderer->create_texture(&surface_dot);
     }
     
     ~Dot() {

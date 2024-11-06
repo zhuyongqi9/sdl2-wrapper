@@ -15,7 +15,7 @@ public:
         color_border_item_default = {37,84,149,255};
         
         font_color = {0, 0, 0, 255};
-        icon.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/widgets/selected_list/black_arrow.png")));
+        icon  = renderer->create_texture(WPNGSurface(PRO_DIR + "/widgets/selected_list/black_arrow.png"));
         
         item_font.reset(new WTTFFont(PRO_DIR + "/widgets/selected_list/OpenSans-Light.ttf", 17 * 2 * SCALE));
         item_width = (default_width + icon->width) * SCALE;

@@ -11,7 +11,7 @@ const int SCREEN_HEIGHT = 600 * SCALE;
 class Front  {
 public:
     Front(WRenderer *renderer): renderer(renderer){
-        picture.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_alpha/fadein.png")));
+        picture  = renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_alpha/fadein.png"));
         alpha = 255;
     }
     
@@ -41,7 +41,7 @@ private:
 class Back {
 public:
     Back(WRenderer *renderer): renderer(renderer){
-        picture.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_alpha/fadeout.png")));
+        picture  = renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_alpha/fadeout.png"));
         alpha = 255;
     }
     

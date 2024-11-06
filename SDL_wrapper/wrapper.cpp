@@ -5,6 +5,7 @@
 #include "SDL2/SDL_rect.h"
 #include "SDL2/SDL_render.h"
 #include "SDL2/SDL_ttf.h"
+#include <memory>
 
 SDL_Initializer::SDL_Initializer(int flags) {
     if (SDL_Init(flags) < 0) {
@@ -66,12 +67,12 @@ WRenderer::~WRenderer() {
     }
 }
 
-WTexture* WRenderer::create_texture(WSurface *surface) {
-    return new WTexture(this, surface);
+std::unique_ptr<WTexture> WRenderer::create_texture(WSurface *surface) {
+    return std::unique_ptr<WTexture>(new WTexture(this, surface));
 }
 
-WTexture* WRenderer::create_texture(WSurface &&surface) {
-    return new WTexture(this, &surface);
+std::unique_ptr<WTexture> WRenderer::create_texture(WSurface &&surface) {
+    return std::unique_ptr<WTexture>(new WTexture(this, &surface));
 }
 
 void WRenderer::set_color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

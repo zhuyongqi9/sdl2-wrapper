@@ -19,7 +19,7 @@ public:
     Foo(WRenderer *renderer): renderer(renderer) {
         WPNGSurface surface(PRO_DIR + "/animation/foo.png");
         surface.set_color_key(0, 255, 255);
-        picture.reset(renderer->create_texture(&surface));
+        picture  = renderer->create_texture(&surface);
         timer.start();
     }
     

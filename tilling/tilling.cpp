@@ -70,7 +70,7 @@ public:
     Map(WRenderer *renderer):renderer(renderer) {
         load_map();
         WPNGSurface surface_tile(PRO_DIR + "/tilling/tiles.png");
-        tile_texture.reset(renderer->create_texture(&surface_tile));
+        tile_texture  = renderer->create_texture(&surface_tile);
     }
     
     void render(SDL_Rect &camera) {
@@ -148,7 +148,7 @@ public:
     {
         WPNGSurface surface(PRO_DIR + "/tilling/dot.bmp");
         surface.set_color_key(0, 255, 255);
-        texture.reset(renderer->create_texture(&surface));
+        texture  = renderer->create_texture(&surface);
         box = {0, 0, texture->width, texture->height};
     }
     

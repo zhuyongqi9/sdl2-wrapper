@@ -19,7 +19,7 @@ const int SCREEN_HEIGHT = BUTTON_HEIGHT;
 class Button {
 public:
     Button(WRenderer *renderer):renderer(renderer) {
-        picture.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/handle_mouse_event/button.png")));
+        picture  = renderer->create_texture(WPNGSurface(PRO_DIR + "/handle_mouse_event/button.png"));
         status = BUTTON_SPRITE_MOUSE_OUT;
     }
     

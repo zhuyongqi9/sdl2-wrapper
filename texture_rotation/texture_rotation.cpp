@@ -10,7 +10,7 @@ const int SCREEN_HEIGHT = 600 * SCALE;
 class Arrow {
 public:
     Arrow(WRenderer *renderer):renderer(renderer) {
-        arrow.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_rotation/arrow.png")));
+        arrow  = renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_rotation/arrow.png"));
         angle = 0.0;
     } 
     

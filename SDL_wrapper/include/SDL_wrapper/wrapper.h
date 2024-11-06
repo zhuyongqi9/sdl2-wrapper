@@ -71,8 +71,8 @@ public:
     void set_viewport(SDL_Rect *rect);
     void set_viewport(SDL_Rect &&rect);
     
-    WTexture* create_texture(WSurface *surface); 
-    WTexture* create_texture(WSurface &&surface); 
+    std::unique_ptr<WTexture> create_texture(WSurface *surface); 
+    std::unique_ptr<WTexture> create_texture(WSurface &&surface); 
     SDL_Renderer* get() { return renderer; }
 private:
     SDL_Renderer *renderer;

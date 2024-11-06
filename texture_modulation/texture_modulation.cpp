@@ -10,7 +10,7 @@ const int SCREEN_HEIGHT = 600 * SCALE;
 class ColorBoard {
 public:
     ColorBoard(WRenderer *renderer):renderer(renderer) {
-        picture.reset(renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_modulation/colors.png")));
+        picture  = renderer->create_texture(WPNGSurface(PRO_DIR + "/texture_modulation/colors.png"));
         r = g = b = 255;
     }
     

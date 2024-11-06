@@ -16,11 +16,11 @@ public:
         
         WPNGSurface playing_surface(PRO_DIR + "/widgets/playing_button/playing_button_playing.png");
         playing_surface.set_color_key(0, 0, 0);
-        playing_icon.reset(renderer->create_texture(&playing_surface));
+        playing_icon  = renderer->create_texture(&playing_surface);
         
         WPNGSurface paused_surface(PRO_DIR + "/widgets/playing_button/playing_button_paused.png");
         paused_surface.set_color_key(0, 0, 0);
-        paused_icon.reset(renderer->create_texture(&paused_surface));
+        paused_icon  = renderer->create_texture(&paused_surface);
     }
     
     void handle_event(SDL_Event &e) {

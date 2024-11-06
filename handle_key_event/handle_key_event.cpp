@@ -15,15 +15,15 @@ public:
     Widget(WRenderer *renderer) {
         arr_texture.resize(KEY_PRESS_SURFACE_TOTAL);
         WBMPSurface surface_default(PRO_DIR + "/handle_key_event/press.bmp");
-        arr_texture[KEY_PRESS_SURFACE_DEFAULT].reset(renderer->create_texture(&surface_default));
+        arr_texture[KEY_PRESS_SURFACE_DEFAULT]  = renderer->create_texture(&surface_default);
         WBMPSurface surface_down(PRO_DIR + "/handle_key_event/down.bmp");
-        arr_texture[KEY_PRESS_SURFACE_DOWN].reset(renderer->create_texture(&surface_down));
+        arr_texture[KEY_PRESS_SURFACE_DOWN]  = renderer->create_texture(&surface_down);
         WBMPSurface surface_up(PRO_DIR + "/handle_key_event/up.bmp");
-        arr_texture[KEY_PRESS_SURFACE_UP].reset(renderer->create_texture(&surface_up));
+        arr_texture[KEY_PRESS_SURFACE_UP]  = renderer->create_texture(&surface_up);
         WBMPSurface surface_left(PRO_DIR + "/handle_key_event/left.bmp");
-        arr_texture[KEY_PRESS_SURFACE_LEFT].reset(renderer->create_texture(&surface_left));
+        arr_texture[KEY_PRESS_SURFACE_LEFT]  = renderer->create_texture(&surface_left);
         WBMPSurface surface_right(PRO_DIR + "/handle_key_event/right.bmp");
-        arr_texture[KEY_PRESS_SURFACE_RIGHT].reset(renderer->create_texture(&surface_right));
+        arr_texture[KEY_PRESS_SURFACE_RIGHT]  = renderer->create_texture(&surface_right);
         current = arr_texture[KEY_PRESS_SURFACE_DEFAULT].get();
     }
 

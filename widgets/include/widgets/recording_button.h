@@ -12,11 +12,11 @@ public:
         
         WPNGSurface stopped_icon_surface(WPNGSurface(PRO_DIR + "/widgets/recording_button/recording_button.png"));
         stopped_icon_surface.set_color_key(0, 0, 0);
-        stopped_icon.reset(renderer->create_texture(&stopped_icon_surface));
+        stopped_icon  = renderer->create_texture(&stopped_icon_surface);
         
         WPNGSurface recording_icon_surface(WPNGSurface(PRO_DIR + "/widgets/recording_button/recording_button_recording.png"));
         recording_icon_surface.set_color_key(0, 0, 0);
-        recording_icon.reset(renderer->create_texture(&recording_icon_surface));
+        recording_icon  = renderer->create_texture(&recording_icon_surface);
         
         region = { dst.x, dst.y, width, height};
     }

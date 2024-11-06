@@ -12,7 +12,7 @@ class Background {
 public:    
     Background(WRenderer *renderer):renderer(renderer) {
         WPNGSurface surface(PRO_DIR + "/surface_color_key/background.png");
-        picture.reset(renderer->create_texture(&surface));
+        picture  = renderer->create_texture(&surface);
     }
     
     void render() {
@@ -28,7 +28,7 @@ public:
     Foo(WRenderer *renderer): renderer(renderer) {
         WPNGSurface surface(PRO_DIR + "/surface_color_key/foo.png");
         surface.set_color_key(0, 255, 255);
-        picture.reset(renderer->create_texture(&surface));
+        picture  = renderer->create_texture(&surface);
         dst = { (int)(240 * 2.5), 150 * 4 - 130, picture->width, picture->height};
     }
     
