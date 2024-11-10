@@ -108,7 +108,7 @@ private:
             throw std::runtime_error("failed to load map");
         }
         
-        int x,y;
+        int x, y;
         x = y = 0;
         for (int i = 0; i < TOTAL_TILES; i++) {
             int tile_type = -1;
